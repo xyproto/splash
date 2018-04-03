@@ -35,42 +35,7 @@ func main() {
 
 ## Available syntax highlighting styles
 
-    abap
-    algol
-    algol_nu
-    api
-    arduino
-    autumn
-    borland
-    bw
-    colorful
-    dracula
-    emacs
-    friendly
-    fruity
-    github
-    igor
-    lovelace
-    manni
-    monokai
-    monokailight
-    murphy
-    native
-    paraiso-dark
-    paraiso-light
-    pastie
-    perldoc
-    pygments
-    rainbow_dash
-    rrt
-    swapoff
-    tango
-    trac
-    vim
-    vs
-    xcode
-
-See the `stylegallery` example for a full overview of available styles and how they may appear.
+See the [Style Gallery](https://xyproto.github.io/splash/docs/) for a full overview of available styles and how they may appear.
 
 ## General information
 
