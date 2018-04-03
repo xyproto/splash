@@ -53,15 +53,22 @@ func Splash(htmlData []byte, styleName string) ([]byte, error) {
 	mutableBytes := make([]byte, len(htmlData))
 	copy(mutableBytes, htmlData)
 
+	// Replace <pre><code> with <code><pre>
+	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre><code>"), []byte("<code><pre class=\"chroma\">"), -1)
+
+	// Replace </code></pre> with </pre></code>
+	mutableBytes = bytes.Replace(mutableBytes, []byte("</code></pre>"), []byte("</pre></code>"), -1)
+
 	// Parse the given HTML
-	root, err := gohtml.Parse(bytes.NewReader(htmlData))
+	root, err := gohtml.Parse(bytes.NewReader(mutableBytes))
 	if err != nil {
 		return []byte{}, err
 	}
 
-	// Find all <code> and <pre> tags
+	// Find all <pre> tags
 	matcher := func(n *gohtml.Node) bool {
-		return n.DataAtom == atom.Code || n.DataAtom == atom.Pre
+		//return n.DataAtom == atom.Code || n.DataAtom == atom.Pre
+		return n.DataAtom == atom.Pre
 	}
 	allCodeTags := scrape.FindAll(root, matcher)
 
@@ -121,19 +128,16 @@ func Splash(htmlData []byte, styleName string) ([]byte, error) {
 	//re2 := regexp.MustCompile(`(?s)/<\/pre>\s*<\/pre>/<\/pre>/g`)
 
 	// Remove duplicate pre tags
-	// TODO: Remove duplicate pre tags in a proper way, this is a hack
+	// TODO: Remove duplicate pre tags in a proper way, this is an ugly hack
+	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre><pre "), []byte("<pre "), -1)
 	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre>\n<pre "), []byte("<pre "), -1)
 	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre>\n  <pre "), []byte("<pre "), -1)
-
+	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre>\n    <pre "), []byte("<pre "), -1)
+	mutableBytes = bytes.Replace(mutableBytes, []byte("</pre></pre>"), []byte("</pre>"), -1)
 	mutableBytes = bytes.Replace(mutableBytes, []byte("</pre>\n</pre>"), []byte("</pre>"), -1)
 	mutableBytes = bytes.Replace(mutableBytes, []byte("</pre>\n  </pre>"), []byte("</pre>"), -1)
 	mutableBytes = bytes.Replace(mutableBytes, []byte("</pre>\n    </pre>"), []byte("</pre>"), -1)
-
-	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre><code><pre "), []byte("<pre "), -1)
-
-	mutableBytes = bytes.Replace(mutableBytes, []byte("</pre>\n</code></pre>"), []byte("</pre>"), -1)
-	mutableBytes = bytes.Replace(mutableBytes, []byte("</pre>\n  </code></pre>"), []byte("</pre>"), -1)
-	mutableBytes = bytes.Replace(mutableBytes, []byte("</pre>\n    </code></pre>"), []byte("</pre>"), -1)
+	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre class=\"chroma\"><pre class=\"chroma\">"), []byte("<pre class=\"chroma\">"), -1)
 
 	// Add all the generated CSS to a <style> tag in the generated HTML
 	htmlBytes, err := AddCSSToHTML(mutableBytes, cssbuf.Bytes())

@@ -94,6 +94,9 @@ func main() {
 func TestMarkdown(t *testing.T) {
 	var inputBuffer bytes.Buffer
 
+	//fmt.Println("--- Markdown INPUT ---")
+	//fmt.Println(simpleMarkdown)
+
 	inputBuffer.WriteString("<!doctype html><html><head><title>Markdown</title></head><body>")
 
 	// Convert Markdown to HTML
@@ -102,7 +105,7 @@ func TestMarkdown(t *testing.T) {
 	inputBuffer.WriteString("</body></html>")
 
 	// Highlight the source code in the HTML with the current style
-	htmlBytes, err := Splash(inputBuffer.Bytes(), "github")
+	htmlBytes, err := Splash(inputBuffer.Bytes(), "monokai")
 	if err != nil {
 		panic(err)
 	}
@@ -110,17 +113,20 @@ func TestMarkdown(t *testing.T) {
 	input := inputBuffer.String()
 	output := string(htmlBytes)
 
-	fmt.Println("--- INPUT ---")
-	fmt.Println(input)
-	fmt.Println("--- OUTPUT ---")
-	fmt.Println(output)
+	//fmt.Println("--- HTML INPUT ---")
+	//fmt.Println(input)
 
-	//inputPreCount := strings.Count(input, "<pre")
-	//inputCodeCount := strings.Count(input, "<code")
+	//fmt.Println("--- HTML OUTPUT ---")
+	//fmt.Println(output)
 
-	//outputPreCount := strings.Count(output, "<pre")
-	//outputCodeCount := strings.Count(output, "<code")
+	inputPreCount := strings.Count(input, "<pre")
+	//fmt.Println("INPUT PRE:", inputPreCount)
+	inputCodeCount := strings.Count(input, "<code")
 
-	//assertEqual(t, inputPreCount, outputPreCount, "<pre count differs")
-	//assertEqual(t, inputCodeCount, outputCodeCount, "<code count differs")
+	outputPreCount := strings.Count(output, "<pre")
+	//fmt.Println("OUTPUT PRE:", outputPreCount)
+	outputCodeCount := strings.Count(output, "<code")
+
+	assertEqual(t, inputPreCount, outputPreCount, "<pre count differs")
+	assertEqual(t, inputCodeCount, outputCodeCount, "<code count differs")
 }
