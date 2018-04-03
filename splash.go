@@ -115,6 +115,14 @@ func Splash(htmlData []byte, styleName string) ([]byte, error) {
 		mutableBytes = bytes.Replace(mutableBytes, []byte(sourceCode), highlightedHTML.Bytes(), 1)
 	}
 
+	// Remove duplicate pre tags.
+	// TODO: Rewrite the following code and make it more robust
+	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre>\n<pre "), []byte("<pre "), -1)
+	mutableBytes = bytes.Replace(mutableBytes, []byte("</pre>\n</pre>"), []byte("</pre>"), -1)
+	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre>\n<pre "), []byte("<pre "), -1)
+	mutableBytes = bytes.Replace(mutableBytes, []byte("</pre>\n  </pre>"), []byte("</pre>"), -1)
+	mutableBytes = bytes.Replace(mutableBytes, []byte("</pre>\n    </pre>"), []byte("</pre>"), -1)
+
 	// Add all the generated CSS to a <style> tag in the generated HTML
 	htmlBytes, err := AddCSSToHTML(mutableBytes, cssbuf.Bytes())
 	if err != nil {
