@@ -43,6 +43,7 @@ var styles = []string{
 	"xcode",
 }
 
+const title = "Chroma Style Gallery"
 const simpleCSS = "body { font-family: sans-serif; margin: 4em; }"
 
 func main() {
@@ -87,9 +88,13 @@ func main() {
 
 	// Generate an Index file for viewing the different styles
 	var buf bytes.Buffer
-	buf.WriteString("<!doctype html><html><head><title>Style Gallery</title><style>")
+	buf.WriteString("<!doctype html><html><head><title>")
+	buf.WriteString(title)
+	buf.WriteString("</title><style>")
 	buf.WriteString(simpleCSS)
-	buf.WriteString("</style></head><body><h1>Style Gallery</h1><ul>")
+	buf.WriteString("</style></head><body><h1>")
+	buf.WriteString(title)
+	buf.WriteString("</h1><ul>")
 	for _, styleName := range styles {
 		buf.WriteString("<li><a href=\"" + styleName + ".html\">" + styleName + "</a></li>")
 	}
