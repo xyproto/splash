@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"github.com/xyproto/splash"
 	"io/ioutil"
+	"time"
 )
 
 var styles = []string{
@@ -98,7 +99,10 @@ func main() {
 	for _, styleName := range styles {
 		buf.WriteString("<li><a href=\"" + styleName + ".html\">" + styleName + "</a></li>")
 	}
-	buf.WriteString("</ul></body></html>")
+	buf.WriteString("</ul><small>Generated ")
+	buf.WriteString(time.Now().UTC().Format(time.RFC3339)[:10])
+	buf.WriteString(" using <a href=\"https://github.com/xyproto/splash\">splash</a>.")
+	buf.WriteString("</small></body></html>")
 	err := ioutil.WriteFile("index.html", buf.Bytes(), 0644)
 	if err != nil {
 		panic(err)
