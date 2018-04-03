@@ -1,2 +1,3 @@
-# highlight
-Highlight code embedded in HTML using the chroma package
+# Splash
+
+Highlight code embedded in HTML using the [chroma]() package.

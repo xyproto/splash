@@ -4,16 +4,12 @@ package splash
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"github.com/alecthomas/chroma/formatters/html"
 	"github.com/alecthomas/chroma/lexers"
 	"github.com/alecthomas/chroma/styles"
 	"github.com/yhat/scrape"
 	gohtml "golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
-	"io/ioutil"
-	"log"
-	"os"
 	"strings"
 )
 
@@ -35,14 +31,14 @@ func TextJoiner(s []string) string {
 
 // Style can be "swapoff" or "monokai",
 // full style list here: https://github.com/alecthomas/chroma/tree/master/styles
-func Splash(contents []byte, style string) []byte {
+func Splash(contents []byte, style string) ([]byte, error) {
 	// TODO: copy?
-	mutableBytes = contents
+	mutableBytes := contents
 
 	contentReader := bytes.NewReader(contents)
 	root, err := gohtml.Parse(contentReader)
 	if err != nil {
-		log.Fatal(err)
+		return []byte{}, err
 	}
 
 	matcher := func(n *gohtml.Node) bool {
@@ -53,7 +49,7 @@ func Splash(contents []byte, style string) []byte {
 	var cssbuf bytes.Buffer // tmp buf for generated CSS
 
 	allCodeTags := scrape.FindAll(root, matcher)
-	for i, codeTag := range allCodeTags {
+	for _, codeTag := range allCodeTags {
 		sourceCode := scrape.TextJoin(codeTag, TextJoiner)
 
 		lexer := lexers.Analyse(sourceCode)
@@ -70,19 +66,19 @@ func Splash(contents []byte, style string) []byte {
 
 		formatter := html.New(html.WithClasses())
 		if formatter == nil {
-			log.Fatal(err)
+			return []byte{}, err
 		}
 
 		err = formatter.WriteCSS(&cssbuf, style)
 		if err != nil {
-			log.Fatal(err)
+			return []byte{}, err
 		}
 
 		iterator, err := lexer.Tokenise(nil, sourceCode)
 
 		err = formatter.Format(&buf, style, iterator)
 		if err != nil {
-			log.Fatal(err)
+			return []byte{}, err
 		}
 
 		mutableBytes = bytes.Replace(mutableBytes, []byte(sourceCode), buf.Bytes(), 1)
@@ -90,8 +86,8 @@ func Splash(contents []byte, style string) []byte {
 
 	htmlBytes, err := AddCSSToHTML(mutableBytes, cssbuf.Bytes())
 	if err != nil {
-		log.Fatal(err)
+		return []byte{}, err
 	}
 
-	return htmlBytes
+	return htmlBytes, nil
 }

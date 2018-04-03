@@ -1,5 +1,5 @@
-splash
 output_*.html
 *.swp
 *.bak
+example/example
 *~
