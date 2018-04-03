@@ -1,5 +1,8 @@
-output_*.html
 *.swp
 *.bak
-example/example
 *~
+
+output*.html
+
+examples/simple/simple
+examples/stylegallery/stylegallery
