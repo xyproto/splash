@@ -2,7 +2,7 @@
 *.bak
 *~
 
+simple/simple
 output*.html
 
-examples/simple/simple
-examples/stylegallery/stylegallery
+docs/docs
