@@ -75,7 +75,7 @@ func main() {
 		inputBuffer.WriteString("<button onClick=\"history.go(-1)\">Back</button>")
 		inputBuffer.WriteString("</body></html>")
 
-		// Highlight the source code in the HTML with the monokai style
+		// Highlight the source code in the HTML with the current style
 		htmlBytes, err := splash.Splash(inputBuffer.Bytes(), styleName)
 		if err != nil {
 			panic(err)
