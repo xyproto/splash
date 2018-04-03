@@ -56,6 +56,7 @@ func Splash(htmlData []byte, styleName string) ([]byte, error) {
 	// Replace <pre><code> with <code><pre>
 	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre><code>"), []byte("<code><pre class=\"chroma\">"), -1)
 
+	// TODO: This is not right
 	// Replace </code></pre> with </pre></code>
 	mutableBytes = bytes.Replace(mutableBytes, []byte("</code></pre>"), []byte("</pre></code>"), -1)
 
