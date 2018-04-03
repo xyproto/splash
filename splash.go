@@ -16,23 +16,24 @@ import (
 )
 
 var (
-	errHEAD = errors.New("HTML should contain <head> or <html> when adding CSS")
+	errHEAD = errors.New("HTML should contain </head> or <html> when adding CSS")
 )
 
 // AddCSStoHTML takes htmlData and adds cssData in a <style> tag.
-// Returns an error if <head> or <html> does not already exists.
+// Returns an error if </head> or <html> does not already exists.
+// Tries to add CSS as late in <head> as possible.
 func AddCSSToHTML(htmlData, cssData []byte) ([]byte, error) {
 	if bytes.Contains(htmlData, []byte("</head>")) {
 		var buf bytes.Buffer
-		buf.WriteString("<head>\n    <style>")
+		buf.WriteString("<style>")
 		buf.Write(cssData)
-		buf.WriteString("    </style>")
-		return bytes.Replace(htmlData, []byte("<head>"), buf.Bytes(), 1), nil
+		buf.WriteString("\n    </style>\n  </head>")
+		return bytes.Replace(htmlData, []byte("</head>"), buf.Bytes(), 1), nil
 	} else if bytes.Contains(htmlData, []byte("<html>")) {
 		var buf bytes.Buffer
-		buf.WriteString("<html>\n  <head>\n  <style>")
+		buf.WriteString("<html>\n  <head>\n    <style>")
 		buf.Write(cssData)
-		buf.WriteString("    </style>\n  </head>")
+		buf.WriteString("\n    </style>\n  </head>")
 		return bytes.Replace(htmlData, []byte("<html>"), buf.Bytes(), 1), nil
 	} else {
 		return []byte{}, errHEAD
@@ -115,8 +116,12 @@ func Splash(htmlData []byte, styleName string) ([]byte, error) {
 		mutableBytes = bytes.Replace(mutableBytes, []byte(sourceCode), highlightedHTML.Bytes(), 1)
 	}
 
-	// Remove duplicate pre tags.
+	// Remove duplicate pre tags
+
 	// TODO: Rewrite the following code and make it more robust
+	//re1 := regexp.MustCompile(`(?s)/<pre>\s*<pre/<pre/g`)
+	//re2 := regexp.MustCompile(`(?s)/<\/pre>\s*<\/pre>/<\/pre>/g`)
+
 	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre>\n<pre "), []byte("<pre "), -1)
 	mutableBytes = bytes.Replace(mutableBytes, []byte("</pre>\n</pre>"), []byte("</pre>"), -1)
 	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre>\n<pre "), []byte("<pre "), -1)
