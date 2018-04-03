@@ -1,4 +1,5 @@
-package main
+// splash adds a dash of color to embedded source code in HTML
+package splash
 
 import (
 	"bytes"
@@ -32,39 +33,20 @@ func TextJoiner(s []string) string {
 	return strings.Join(s, "")
 }
 
-func process(filename string) {
-	fileReader1, err := os.Open(filename)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer fileReader1.Close()
+// Style can be "swapoff" or "monokai",
+// full style list here: https://github.com/alecthomas/chroma/tree/master/styles
+func Splash(contents []byte, style string) []byte {
+	// TODO: copy?
+	mutableBytes = contents
 
-	fileReader2, err := os.Open(filename)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer fileReader2.Close()
-
-	mutableBytes, err := ioutil.ReadAll(fileReader1)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	root, err := gohtml.Parse(fileReader2)
+	contentReader := bytes.NewReader(contents)
+	root, err := gohtml.Parse(contentReader)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	matcher := func(n *gohtml.Node) bool {
-		if n.DataAtom == atom.Code {
-			fmt.Println("FOUND CODE")
-			return true
-		}
-		if n.DataAtom == atom.Pre {
-			fmt.Println("FOUND PRE")
-			return true
-		}
-		return false
+		return n.DataAtom == atom.Code || n.DataAtom == atom.Pre
 	}
 
 	var buf bytes.Buffer    // tmp buf for generated syntax highlighted HTML
@@ -72,7 +54,6 @@ func process(filename string) {
 
 	allCodeTags := scrape.FindAll(root, matcher)
 	for i, codeTag := range allCodeTags {
-		fmt.Printf("--- NUM: %d ---\n\n", i+1)
 		sourceCode := scrape.TextJoin(codeTag, TextJoiner)
 
 		lexer := lexers.Analyse(sourceCode)
@@ -81,7 +62,7 @@ func process(filename string) {
 			lexer = lexers.Fallback
 		}
 
-		style := styles.Get("swapoff") // monokai
+		style := styles.Get(style)
 		if style == nil {
 			// Could not use the given style
 			style = styles.Fallback
@@ -104,9 +85,6 @@ func process(filename string) {
 			log.Fatal(err)
 		}
 
-		//fmt.Println("--- FROM ---\n" + sourceCode)
-		//fmt.Println("--- TO ---\n" + buf.String())
-
 		mutableBytes = bytes.Replace(mutableBytes, []byte(sourceCode), buf.Bytes(), 1)
 	}
 
@@ -115,15 +93,5 @@ func process(filename string) {
 		log.Fatal(err)
 	}
 
-	err = ioutil.WriteFile("output_"+filename, htmlBytes, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-func main() {
-	process("a.html")
-	process("b.html")
-	process("c.html")
-	process("d.html")
+	return htmlBytes
 }
