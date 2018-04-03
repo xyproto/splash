@@ -123,10 +123,17 @@ func Splash(htmlData []byte, styleName string) ([]byte, error) {
 	// Remove duplicate pre tags
 	// TODO: Remove duplicate pre tags in a proper way, this is a hack
 	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre>\n<pre "), []byte("<pre "), -1)
+	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre>\n  <pre "), []byte("<pre "), -1)
+
 	mutableBytes = bytes.Replace(mutableBytes, []byte("</pre>\n</pre>"), []byte("</pre>"), -1)
-	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre>\n<pre "), []byte("<pre "), -1)
 	mutableBytes = bytes.Replace(mutableBytes, []byte("</pre>\n  </pre>"), []byte("</pre>"), -1)
 	mutableBytes = bytes.Replace(mutableBytes, []byte("</pre>\n    </pre>"), []byte("</pre>"), -1)
+
+	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre><code><pre "), []byte("<pre "), -1)
+
+	mutableBytes = bytes.Replace(mutableBytes, []byte("</pre>\n</code></pre>"), []byte("</pre>"), -1)
+	mutableBytes = bytes.Replace(mutableBytes, []byte("</pre>\n  </code></pre>"), []byte("</pre>"), -1)
+	mutableBytes = bytes.Replace(mutableBytes, []byte("</pre>\n    </code></pre>"), []byte("</pre>"), -1)
 
 	// Add all the generated CSS to a <style> tag in the generated HTML
 	htmlBytes, err := AddCSSToHTML(mutableBytes, cssbuf.Bytes())
