@@ -17,7 +17,9 @@ import (
 
 var (
 	errHEAD = errors.New("HTML should contain <head> or <html> when adding CSS")
-	pad     = true
+
+	// Can be used for disabling the 1em padding around the highlighted source code
+	pad = true
 )
 
 // AddCSStoHTML takes htmlData and adds cssData in a <style> tag.
@@ -129,12 +131,12 @@ func Splash(htmlData []byte, styleName string) ([]byte, error) {
 	return htmlBytes, nil
 }
 
-// Disable 1em padding around the blacks of source code
+// Disable the 1em padding around the highlighted source code
 func DisablePadding() {
 	pad = false
 }
 
-// Enable 1em padding around the blacks of source code
+// Enable the 1em padding around the highlighted source code
 func EnablePadding() {
 	pad = true
 }
