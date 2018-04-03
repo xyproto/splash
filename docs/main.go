@@ -44,8 +44,10 @@ var styles = []string{
 	"xcode",
 }
 
-const title = "Chroma Style Gallery"
-const simpleCSS = "body { font-family: sans-serif; margin: 4em; }"
+const (
+	title     = "Chroma Style Gallery"
+	simpleCSS = "body { font-family: sans-serif; margin: 4em; } .chroma { padding: 1em; }"
+)
 
 func main() {
 
