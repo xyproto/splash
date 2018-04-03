@@ -6,7 +6,7 @@ The generated output is tested by visual inspection in Chromium, Midori and Nets
 
 ## Example usage
 
-```
+```go
 package main
 
 import (
