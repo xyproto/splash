@@ -67,6 +67,18 @@ func Splash(htmlData []byte, styleName string) ([]byte, error) {
 
 	var cssbuf bytes.Buffer // buffer for generated CSS
 
+	formatter := html.New(html.WithClasses())
+	if formatter == nil {
+		return []byte{}, err
+	}
+
+	// Try to use the given style name
+	style := styles.Get(styleName)
+	if style == nil {
+		// Could not use the given style name
+		style = styles.Fallback
+	}
+
 	// Extract, syntax highlight and place back all snippets of code in the given HTML data
 	for _, codeTag := range allCodeTags {
 
@@ -83,18 +95,7 @@ func Splash(htmlData []byte, styleName string) ([]byte, error) {
 		// Combine token runs
 		lexer = chroma.Coalesce(lexer)
 
-		// Try to use the given style name
-		style := styles.Get(styleName)
-		if style == nil {
-			// Could not use the given style name
-			style = styles.Fallback
-		}
-
-		formatter := html.New(html.WithClasses())
-		if formatter == nil {
-			return []byte{}, err
-		}
-
+		// Write the needed CSS to cssbuf
 		err = formatter.WriteCSS(&cssbuf, style)
 		if err != nil {
 			return []byte{}, err
@@ -116,12 +117,11 @@ func Splash(htmlData []byte, styleName string) ([]byte, error) {
 		mutableBytes = bytes.Replace(mutableBytes, []byte(sourceCode), highlightedHTML.Bytes(), 1)
 	}
 
-	// Remove duplicate pre tags
-
-	// TODO: Rewrite the following code and make it more robust
 	//re1 := regexp.MustCompile(`(?s)/<pre>\s*<pre/<pre/g`)
 	//re2 := regexp.MustCompile(`(?s)/<\/pre>\s*<\/pre>/<\/pre>/g`)
 
+	// Remove duplicate pre tags
+	// TODO: Remove duplicate pre tags in a proper way, this is a hack
 	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre>\n<pre "), []byte("<pre "), -1)
 	mutableBytes = bytes.Replace(mutableBytes, []byte("</pre>\n</pre>"), []byte("</pre>"), -1)
 	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre>\n<pre "), []byte("<pre "), -1)
