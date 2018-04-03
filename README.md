@@ -20,7 +20,7 @@ func main() {
 		panic(err)
 	}
 
-    // Highlight the source code in the HTML with the monokai style
+	// Highlight the source code in the HTML with the monokai style
 	htmlBytes, err := splash.Splash(htmlData, "monokai")
 	if err != nil {
 		panic(err)
