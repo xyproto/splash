@@ -51,7 +51,7 @@ const (
 
 func main() {
 
-	for _, styleName := range styles {
+	for i, styleName := range styles {
 
 		// Generate a HTML document for the current style name
 		var inputBuffer bytes.Buffer
@@ -72,7 +72,26 @@ func main() {
 }
 `)
 		inputBuffer.WriteString("</pre></code>")
-		inputBuffer.WriteString("<button onClick=\"history.go(-1)\">Back</button>")
+
+		// Button to the previous style, if possible
+		if i > 0 {
+			prevName := styles[i-1]
+			inputBuffer.WriteString("<button onClick=\"location.href='" + prevName + ".html'\">Prev</button>")
+		} else {
+			inputBuffer.WriteString("<button disabled='true'>Prev</button>")
+		}
+
+		// Button to the next style, if possible
+		if i < (len(styles) - 1) {
+			nextName := styles[i+1]
+			inputBuffer.WriteString("<button onClick=\"location.href='" + nextName + ".html'\">Next</button>")
+		} else {
+			inputBuffer.WriteString("<button disabled='true'>Next</button>")
+		}
+
+		// Button to the overview
+		inputBuffer.WriteString("<button onClick=\"location.href='index.html'\">Up</button>")
+
 		inputBuffer.WriteString("</body></html>")
 
 		// Highlight the source code in the HTML with the current style
@@ -103,7 +122,7 @@ func main() {
 	}
 	buf.WriteString("</ul><small>Generated ")
 	buf.WriteString(time.Now().UTC().Format(time.RFC3339)[:10])
-	buf.WriteString(" using <a href=\"https://github.com/xyproto/splash\">splash</a>.")
+	buf.WriteString(" by <a href=\"https://github.com/xyproto\">xyproto</a> using <a href=\"https://github.com/xyproto/splash\">splash</a>.")
 	buf.WriteString("</small></body></html>")
 	err := ioutil.WriteFile("index.html", buf.Bytes(), 0644)
 	if err != nil {
