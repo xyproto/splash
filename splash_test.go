@@ -103,7 +103,7 @@ func main() {
 	inputBuffer.WriteString("</pre></code></body></html>")
 
 	// Highlight the source code in the HTML with the current style
-	htmlBytes, err := Splash(inputBuffer.Bytes(), styleName, false)
+	htmlBytes, err := Splash(inputBuffer.Bytes(), styleName)
 	if err != nil {
 		panic(err)
 	}
@@ -142,7 +142,7 @@ func TestMarkdown(t *testing.T) {
 	inputBuffer.WriteString("</body></html>")
 
 	// Highlight the source code in the HTML with the current style
-	htmlBytes, err := Splash(inputBuffer.Bytes(), "monokai", true)
+	htmlBytes, err := UnescapeSplash(inputBuffer.Bytes(), "monokai")
 	if err != nil {
 		panic(err)
 	}
@@ -199,7 +199,7 @@ func main() {
 	inputBuffer.WriteString("</pre></code></body></html>")
 
 	// Highlight the source code in the HTML with the current style
-	htmlBytes, err := Splash(inputBuffer.Bytes(), styleName, false)
+	htmlBytes, err := Splash(inputBuffer.Bytes(), styleName)
 	if err != nil {
 		panic(err)
 	}
@@ -231,7 +231,7 @@ func TestLanguageBlock(t *testing.T) {
 	inputBuffer.WriteString("</body></html>")
 
 	// Highlight the source code in the HTML with the current style
-	htmlBytes, err := Splash(inputBuffer.Bytes(), styleName, true)
+	htmlBytes, err := UnescapeSplash(inputBuffer.Bytes(), styleName)
 	if err != nil {
 		panic(err)
 	}

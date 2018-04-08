@@ -50,9 +50,32 @@ func AddCSSToHTML(htmlData, cssData []byte) ([]byte, error) {
 // Returns the modified HTML source code with embedded CSS as a <style> tag.
 // Requires the given HTML to contain </head> or <html>.
 //
+// language specifiers like <code class="language-c"> are supported.
+func Splash(htmlData []byte, styleName string) ([]byte, error) {
+	return highlightPre(htmlData, styleName, false)
+}
+
+// UnescapeSplash does the same as Splash, but unescapes the HTML in the source
+// code before highlighting. Use this if "&amp;" appears in the highlighted code
+// instead of "&", and that is not what you wanted.
+// Useful when highlighting source code after having rendered Markdown.
+func UnescapeSplash(htmlData []byte, styleName string) ([]byte, error) {
+	return highlightPre(htmlData, styleName, true)
+}
+
+// highlightPre takes HTML code as bytes and tries to syntax highlight code between
+// <pre> and </pre> tags.
+//
+// "style" is a syntax highlight style, like "monokai".
+//
+// Full style list here: https://github.com/alecthomas/chroma/tree/master/styles
+//
+// Returns the modified HTML source code with embedded CSS as a <style> tag.
+// Requires the given HTML to contain </head> or <html>.
+//
 // unescape can be set to true for unescaping already escaped code in <pre> tags,
 // which can be useful when highlighting code in newly rendered markdown.
-func Splash(htmlData []byte, styleName string, unescape bool) ([]byte, error) {
+func highlightPre(htmlData []byte, styleName string, unescape bool) ([]byte, error) {
 
 	// Try to use the given style name
 	style := styles.Get(styleName)
