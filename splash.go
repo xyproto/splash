@@ -1,25 +1,25 @@
-// splash adds a dash of color to embedded source code in HTML
+// Package splash adds a dash of color to embedded source code in HTML
 package splash
 
 import (
 	"bytes"
 	"errors"
-	"github.com/alecthomas/chroma"
-	"github.com/alecthomas/chroma/formatters/html"
-	"github.com/alecthomas/chroma/lexers"
-	"github.com/alecthomas/chroma/styles"
-	"github.com/yhat/scrape"
-	gohtml "golang.org/x/net/html"
-	"golang.org/x/net/html/atom"
-	"strings"
+	"html"
+	"regexp"
 	"unicode"
+
+	"github.com/alecthomas/chroma"
+	chromaHTML "github.com/alecthomas/chroma/formatters/html"
+	"github.com/alecthomas/chroma/lexers"
+	"github.com/alecthomas/chroma/lexers/c"
+	"github.com/alecthomas/chroma/styles"
 )
 
 var (
 	errHEAD = errors.New("HTML should contain </head> or <html> when adding CSS")
 )
 
-// AddCSStoHTML takes htmlData and adds cssData in a <style> tag.
+// AddCSSToHTML takes htmlData and adds cssData in a <style> tag.
 // Returns an error if </head> or <html> does not already exists.
 // Tries to add CSS as late in <head> as possible.
 func AddCSSToHTML(htmlData, cssData []byte) ([]byte, error) {
@@ -40,45 +40,19 @@ func AddCSSToHTML(htmlData, cssData []byte) ([]byte, error) {
 	}
 }
 
-// Splash takes HTML code as bytes and tries to syntax highlight
-// code between <pre></pre>, <pre><code></code></pre>, <code><pre></pre></code> or <code></code>.
+// Splash takes HTML code as bytes and tries to syntax highlight code between
+// <pre> and </pre> tags.
+//
 // "style" is a syntax highlight style, like "monokai".
+//
 // Full style list here: https://github.com/alecthomas/chroma/tree/master/styles
+//
 // Returns the modified HTML source code with embedded CSS as a <style> tag.
 // Requires the given HTML to contain </head> or <html>.
-func Splash(htmlData []byte, styleName string) ([]byte, error) {
-
-	// Create a byte slice used for changing the HTML code when adding
-	// syntax highlight tags and style
-	mutableBytes := make([]byte, len(htmlData))
-	copy(mutableBytes, htmlData)
-
-	// Replace <pre><code> with <code><pre>
-	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre><code>"), []byte("<code><pre class=\"chroma\">"), -1)
-
-	// TODO: This is not right
-	// Replace </code></pre> with </pre></code>
-	mutableBytes = bytes.Replace(mutableBytes, []byte("</code></pre>"), []byte("</pre></code>"), -1)
-
-	// Parse the given HTML
-	root, err := gohtml.Parse(bytes.NewReader(mutableBytes))
-	if err != nil {
-		return []byte{}, err
-	}
-
-	// Find all <pre> tags
-	matcher := func(n *gohtml.Node) bool {
-		//return n.DataAtom == atom.Code || n.DataAtom == atom.Pre
-		return n.DataAtom == atom.Pre
-	}
-	allCodeTags := scrape.FindAll(root, matcher)
-
-	var cssbuf bytes.Buffer // buffer for generated CSS
-
-	formatter := html.New(html.WithClasses())
-	if formatter == nil {
-		return []byte{}, err
-	}
+//
+// unescape can be set to true for unescaping already escaped code in <pre> tags,
+// which can be useful when highlighting code in newly rendered markdown.
+func Splash(htmlData []byte, styleName string, unescape bool) ([]byte, error) {
 
 	// Try to use the given style name
 	style := styles.Get(styleName)
@@ -87,61 +61,142 @@ func Splash(htmlData []byte, styleName string) ([]byte, error) {
 		style = styles.Fallback
 	}
 
-	// Extract, syntax highlight and place back all snippets of code in the given HTML data
-	for _, codeTag := range allCodeTags {
+	// Create a HTML formatter
+	formatter := chromaHTML.New(chromaHTML.WithClasses())
+	if formatter == nil {
+		return []byte{}, errors.New("Unable to instanciate chroma HTML formatter")
+	}
 
-		sourceCode := scrape.TextJoin(codeTag, func(s []string) string {
-			return strings.TrimRightFunc(strings.Join(s, ""), unicode.IsSpace)
-		})
+	var (
+		cssBuf       bytes.Buffer // buffer for generated CSS
+		mutableBytes = htmlData[:]
+		outerErr     error
+	)
 
-		// Try to identify the language
-		lexer := lexers.Analyse(sourceCode)
-		if lexer == nil {
-			// Could not identify the language
-			lexer = lexers.Fallback
+	// Replace the non-highlighted code with highlighted code
+	re := regexp.MustCompile(`(?m)(?s)(<pre>|<pre .*?chroma.*?>)(.*?)(</pre>)`)
+	mutableBytes = re.ReplaceAllFunc(mutableBytes, func(preSource []byte) []byte {
+
+		strippedPreTag1 := false
+		if bytes.HasPrefix(preSource, []byte("<pre>")) && bytes.HasSuffix(preSource, []byte("</pre>")) {
+			// Remove leading and trailing pre tags
+			preSource = preSource[5 : len(preSource)-6]
+			strippedPreTag1 = true
 		}
+
+		strippedCodeTag := false
+		if bytes.HasPrefix(preSource, []byte("<code>")) && bytes.HasSuffix(preSource, []byte("</code>")) {
+			// Remove leading and trailing pre tags
+			preSource = preSource[6 : len(preSource)-7]
+			strippedCodeTag = true
+		}
+
+		strippedPreTag2 := false
+		if bytes.HasPrefix(preSource, []byte("<pre>")) && bytes.HasSuffix(preSource, []byte("</pre>")) {
+			// Remove leading and trailing pre tags
+			preSource = preSource[5 : len(preSource)-6]
+			strippedPreTag2 = true
+		}
+
+		// Check if something like <code class="language-c"> has been specified
+		language := ""
+		strippedLongerCodeTag := false
+		if bytes.HasPrefix(preSource, []byte(`<code class="language-`)) && bytes.Count(preSource, []byte(`"`)) >= 2 {
+			language = string(bytes.SplitN((bytes.SplitN(preSource, []byte(`"`), 3)[1]), []byte("-"), 2)[1])
+			// Then strip the longer tag, if possible
+			if bytes.HasPrefix(preSource, []byte(`<code class="language-`+language+`">`)) && bytes.HasSuffix(preSource, []byte("</code>")) {
+				// Remove leading and trailing pre tags
+				preSource = preSource[len(language)+24 : len(preSource)-7]
+				strippedLongerCodeTag = true
+			}
+		}
+
+		// From bytes to string, while trimming away whitespace from only the end of the string.
+		// There may be wanted indentation at the beginning of the string.
+		preSourceString := string(bytes.TrimRightFunc(preSource, unicode.IsSpace))
+
+		// Unescape HTML, like &amp;, if this has already been done by ie. a Markdown renderer
+		if unescape {
+			preSourceString = html.UnescapeString(preSourceString)
+		}
+
+		// Try to find a suitable lexer
+		var lexer chroma.Lexer
+		if language != "" {
+			// Try to use the specified language
+			lexer = lexers.Get(language)
+		}
+		if lexer == nil {
+			// Try to identify the language based on the source code that is to be highlighted
+			lexer = lexers.Analyse(preSourceString)
+		}
+		if lexer == nil {
+			// Could not identify the language, use the lexer for C by default (the laternative is lexers.Fallback)
+			lexer = c.C
+		}
+
 		// Combine token runs
 		lexer = chroma.Coalesce(lexer)
 
-		// Write the needed CSS to cssbuf
-		err = formatter.WriteCSS(&cssbuf, style)
+		// Prepare to iterate over the tokens in the source code
+		iterator, err := lexer.Tokenise(nil, preSourceString)
 		if err != nil {
-			return []byte{}, err
+			outerErr = err
+			return []byte{}
 		}
 
-		var highlightedHTML bytes.Buffer // tmp buf for the generated syntax highlighted HTML
-
-		// Format the sourceCode and write the new markup to highlightedHTML
-		iterator, err := lexer.Tokenise(nil, sourceCode)
+		// Write the needed CSS to cssBuf
+		err = formatter.WriteCSS(&cssBuf, style)
 		if err != nil {
-			return []byte{}, err
-		}
-		err = formatter.Format(&highlightedHTML, style, iterator)
-		if err != nil {
-			return []byte{}, err
+			outerErr = err
+			return []byte{}
 		}
 
-		// Replace the non-highlighted code with highlighted code
-		mutableBytes = bytes.Replace(mutableBytes, []byte(sourceCode), highlightedHTML.Bytes(), 1)
+		// Write the highlightet HTML to the hiBuf buffer
+		var hiBuf bytes.Buffer
+		err = formatter.Format(&hiBuf, style, iterator)
+		if err != nil {
+			outerErr = err
+			return []byte{}
+		}
+
+		// Check that the highlighted bytes have a minimum of information
+		hiBytes := hiBuf.Bytes()
+
+		//fmt.Println("GOT POST SOURCE:\n" + string(hiBytes) + "\n\n")
+
+		// <code><pre class="chroma"> gives the best results. <pre> and then <code> renders things wrong here.
+
+		if !strippedPreTag2 {
+			// Remove the <pre> tag that was added by chroma
+			hlen := len(hiBytes)
+			if bytes.HasPrefix(hiBytes, []byte(`<pre class="chroma">`)) && bytes.HasSuffix(hiBytes, []byte("</pre>")) {
+				// Remove the leading <pre class="chroma"> and the trailing </pre> tag
+				hiBytes = hiBytes[len(`<pre class="chroma">`) : hlen-len("</pre>")]
+			}
+		}
+
+		if strippedCodeTag || strippedLongerCodeTag {
+			// Add the <code> tag again
+			hiBytes = []byte("<code>" + string(hiBytes) + "</code>")
+		}
+
+		if strippedPreTag1 {
+			// Add the <pre> tag
+			hiBytes = []byte(`<pre class="chroma">` + string(hiBytes) + "</pre>")
+		}
+
+		//fmt.Println("GOT OUTPUT SOURCE:\n" + string(hiBytes) + "\n\n")
+
+		return hiBytes
+	})
+
+	if outerErr != nil {
+		return []byte{}, outerErr
 	}
 
-	//re1 := regexp.MustCompile(`(?s)/<pre>\s*<pre/<pre/g`)
-	//re2 := regexp.MustCompile(`(?s)/<\/pre>\s*<\/pre>/<\/pre>/g`)
-
-	// Remove duplicate pre tags
-	// TODO: Remove duplicate pre tags in a proper way, this is an ugly hack
-	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre><pre "), []byte("<pre "), -1)
-	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre>\n<pre "), []byte("<pre "), -1)
-	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre>\n  <pre "), []byte("<pre "), -1)
-	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre>\n    <pre "), []byte("<pre "), -1)
-	mutableBytes = bytes.Replace(mutableBytes, []byte("</pre></pre>"), []byte("</pre>"), -1)
-	mutableBytes = bytes.Replace(mutableBytes, []byte("</pre>\n</pre>"), []byte("</pre>"), -1)
-	mutableBytes = bytes.Replace(mutableBytes, []byte("</pre>\n  </pre>"), []byte("</pre>"), -1)
-	mutableBytes = bytes.Replace(mutableBytes, []byte("</pre>\n    </pre>"), []byte("</pre>"), -1)
-	mutableBytes = bytes.Replace(mutableBytes, []byte("<pre class=\"chroma\"><pre class=\"chroma\">"), []byte("<pre class=\"chroma\">"), -1)
-
 	// Add all the generated CSS to a <style> tag in the generated HTML
-	htmlBytes, err := AddCSSToHTML(mutableBytes, cssbuf.Bytes())
+	htmlBytes, err := AddCSSToHTML(mutableBytes, cssBuf.Bytes())
 	if err != nil {
 		return []byte{}, err
 	}
