@@ -27,13 +27,13 @@ func AddCSSToHTML(htmlData, cssData []byte) ([]byte, error) {
 		var buf bytes.Buffer
 		buf.WriteString("<style>")
 		buf.Write(cssData)
-		buf.WriteString("\n    </style>\n  </head>")
+		buf.WriteString("</style></head>\n")
 		return bytes.Replace(htmlData, []byte("</head>"), buf.Bytes(), 1), nil
 	} else if bytes.Contains(htmlData, []byte("<html>")) {
 		var buf bytes.Buffer
-		buf.WriteString("<html>\n  <head>\n    <style>")
+		buf.WriteString("<html><head><style>")
 		buf.Write(cssData)
-		buf.WriteString("\n    </style>\n  </head>")
+		buf.WriteString("</style></head>\n")
 		return bytes.Replace(htmlData, []byte("<html>"), buf.Bytes(), 1), nil
 	} else {
 		return []byte{}, errHEAD
@@ -218,8 +218,11 @@ func highlightPre(htmlData []byte, styleName string, unescape bool) ([]byte, err
 		return []byte{}, outerErr
 	}
 
-	// Add all the generated CSS to a <style> tag in the generated HTML
-	htmlBytes, err := AddCSSToHTML(mutableBytes, cssBuf.Bytes())
+	re = regexp.MustCompile(`(?s)/\*.*?\*/|\n`) // Strip comments and newlines
+	stripped := []byte(re.ReplaceAllString(cssBuf.String(), "$1"))
+
+	// Add all the generated CSS to a <style> tag in the generated HTML, without newlines
+	htmlBytes, err := AddCSSToHTML(mutableBytes, stripped)
 	if err != nil {
 		return []byte{}, err
 	}
