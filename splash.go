@@ -19,27 +19,6 @@ var (
 	errHEAD = errors.New("HTML should contain <head> or <html> when adding CSS")
 )
 
-// AddCSSToHTML takes htmlData and adds cssData in a <style> tag.
-// Returns an error if </head> or <html> does not already exists.
-// Tries to add CSS as late in <head> as possible.
-func AddCSSToHTML(htmlData, cssData []byte) ([]byte, error) {
-	if bytes.Contains(htmlData, []byte("<head>")) {
-		var buf bytes.Buffer
-		buf.WriteString("<head><style>")
-		buf.Write(cssData)
-		buf.WriteString("</style>\n")
-		return bytes.Replace(htmlData, []byte("<head>"), buf.Bytes(), 1), nil
-	} else if bytes.Contains(htmlData, []byte("<html>")) {
-		var buf bytes.Buffer
-		buf.WriteString("<html><head><style>")
-		buf.Write(cssData)
-		buf.WriteString("</style></head>\n")
-		return bytes.Replace(htmlData, []byte("<html>"), buf.Bytes(), 1), nil
-	} else {
-		return []byte{}, errHEAD
-	}
-}
-
 // Splash takes HTML code as bytes and tries to syntax highlight code between
 // <pre> and </pre> tags.
 //
@@ -186,10 +165,6 @@ func highlightPre(htmlData []byte, styleName string, unescape bool) ([]byte, err
 		// Check that the highlighted bytes have a minimum of information
 		hiBytes := hiBuf.Bytes()
 
-		//fmt.Println("GOT POST SOURCE:\n" + string(hiBytes) + "\n\n")
-
-		// <code><pre class="chroma"> gives the best results. <pre> and then <code> renders things wrong here.
-
 		if !strippedPreTag2 {
 			// Remove the <pre> tag that was added by chroma
 			hlen := len(hiBytes)
@@ -209,8 +184,6 @@ func highlightPre(htmlData []byte, styleName string, unescape bool) ([]byte, err
 			hiBytes = []byte(`<pre class="chroma">` + string(hiBytes) + "</pre>")
 		}
 
-		//fmt.Println("GOT OUTPUT SOURCE:\n" + string(hiBytes) + "\n\n")
-
 		return hiBytes
 	})
 
@@ -228,4 +201,25 @@ func highlightPre(htmlData []byte, styleName string, unescape bool) ([]byte, err
 	}
 
 	return htmlBytes, nil
+}
+
+// AddCSSToHTML takes htmlData and adds cssData in a <style> tag.
+// Returns an error if </head> or <html> does not already exists.
+// Tries to add CSS as late in <head> as possible.
+func AddCSSToHTML(htmlData, cssData []byte) ([]byte, error) {
+	if bytes.Contains(htmlData, []byte("<head>")) {
+		var buf bytes.Buffer
+		buf.WriteString("<head><style>")
+		buf.Write(cssData)
+		buf.WriteString("</style>\n")
+		return bytes.Replace(htmlData, []byte("<head>"), buf.Bytes(), 1), nil
+	} else if bytes.Contains(htmlData, []byte("<html>")) {
+		var buf bytes.Buffer
+		buf.WriteString("<html><head><style>")
+		buf.Write(cssData)
+		buf.WriteString("</style></head>\n")
+		return bytes.Replace(htmlData, []byte("<html>"), buf.Bytes(), 1), nil
+	} else {
+		return []byte{}, errHEAD
+	}
 }
