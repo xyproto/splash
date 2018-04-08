@@ -16,19 +16,19 @@ import (
 )
 
 var (
-	errHEAD = errors.New("HTML should contain </head> or <html> when adding CSS")
+	errHEAD = errors.New("HTML should contain <head> or <html> when adding CSS")
 )
 
 // AddCSSToHTML takes htmlData and adds cssData in a <style> tag.
 // Returns an error if </head> or <html> does not already exists.
 // Tries to add CSS as late in <head> as possible.
 func AddCSSToHTML(htmlData, cssData []byte) ([]byte, error) {
-	if bytes.Contains(htmlData, []byte("</head>")) {
+	if bytes.Contains(htmlData, []byte("<head>")) {
 		var buf bytes.Buffer
-		buf.WriteString("<style>")
+		buf.WriteString("<head><style>")
 		buf.Write(cssData)
-		buf.WriteString("</style></head>\n")
-		return bytes.Replace(htmlData, []byte("</head>"), buf.Bytes(), 1), nil
+		buf.WriteString("</style>\n")
+		return bytes.Replace(htmlData, []byte("<head>"), buf.Bytes(), 1), nil
 	} else if bytes.Contains(htmlData, []byte("<html>")) {
 		var buf bytes.Buffer
 		buf.WriteString("<html><head><style>")
