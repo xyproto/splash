@@ -11,12 +11,13 @@ import (
 	"github.com/alecthomas/chroma"
 	chromaHTML "github.com/alecthomas/chroma/formatters/html"
 	"github.com/alecthomas/chroma/lexers"
-	"github.com/alecthomas/chroma/lexers/c"
 	"github.com/alecthomas/chroma/styles"
 )
 
 var (
 	errHEAD = errors.New("HTML should contain <head> or <html> when adding CSS")
+
+	defaultLanguage = "c"
 )
 
 // Splash takes HTML code as bytes and tries to syntax highlight code between
@@ -40,6 +41,11 @@ func Splash(htmlData []byte, styleName string) ([]byte, error) {
 // Useful when highlighting source code after having rendered Markdown.
 func UnescapeSplash(htmlData []byte, styleName string) ([]byte, error) {
 	return highlightPre(htmlData, styleName, true)
+}
+
+// Change the default language from "c" to something else. Must be supported by chroma.
+func SetDefaultLanguage(languageName string) {
+	defaultLanguage = languageName
 }
 
 // highlightPre takes HTML code as bytes and tries to syntax highlight code between
@@ -133,8 +139,12 @@ func highlightPre(htmlData []byte, styleName string, unescape bool) ([]byte, err
 			lexer = lexers.Analyse(preSourceString)
 		}
 		if lexer == nil {
-			// Could not identify the language, use the lexer for C by default (the laternative is lexers.Fallback)
-			lexer = c.C
+			// Could not identify the language, use the default language
+			lexer = lexers.Get(defaultLanguage)
+		}
+		if lexer == nil {
+			// Could not use the default language, use the fallback
+			lexer = lexers.Fallback
 		}
 
 		// Combine token runs
