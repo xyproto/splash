@@ -3,70 +3,70 @@
 <span class="kn">package</span> <span class="nx">main</span>
 
 <span class="kn">import</span> <span class="p">(</span>
-	<span class="s">&#34;fmt&#34;</span>
-	<span class="s">&#34;math/rand&#34;</span>
-	<span class="s">&#34;time&#34;</span>
+    <span class="s">&#34;fmt&#34;</span>
+    <span class="s">&#34;math/rand&#34;</span>
+    <span class="s">&#34;time&#34;</span>
 <span class="p">)</span>
 
 <span class="kd">type</span> <span class="nx">Moo</span> <span class="kd">struct</span> <span class="p">{</span>
-	<span class="nx">Cow</span>   <span class="kt">int</span>
-	<span class="nx">Sound</span> <span class="kt">string</span>
-	<span class="nx">Tube</span>  <span class="kd">chan</span> <span class="kt">bool</span>
+    <span class="nx">Cow</span>   <span class="kt">int</span>
+    <span class="nx">Sound</span> <span class="kt">string</span>
+    <span class="nx">Tube</span>  <span class="kd">chan</span> <span class="kt">bool</span>
 <span class="p">}</span>
 
 <span class="c1">// A cow will moo until it is being milked
 </span><span class="c1"></span><span class="kd">func</span> <span class="nx">cow</span><span class="p">(</span><span class="nx">num</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">mootube</span> <span class="kd">chan</span> <span class="nx">Moo</span><span class="p">)</span> <span class="p">{</span>
-	<span class="nx">tube</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">bool</span><span class="p">)</span>
-	<span class="k">for</span> <span class="p">{</span>
-		<span class="k">select</span> <span class="p">{</span>
-		<span class="k">case</span> <span class="nx">mootube</span> <span class="o">&lt;-</span> <span class="nx">Moo</span><span class="p">{</span><span class="nx">num</span><span class="p">,</span> <span class="s">&#34;moo&#34;</span><span class="p">,</span> <span class="nx">tube</span><span class="p">}:</span>
-			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Cow number&#34;</span><span class="p">,</span> <span class="nx">num</span><span class="p">,</span> <span class="s">&#34;mooed through the mootube&#34;</span><span class="p">)</span>
-			<span class="o">&lt;-</span><span class="nx">tube</span>
-			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Cow number&#34;</span><span class="p">,</span> <span class="nx">num</span><span class="p">,</span> <span class="s">&#34;is being milked and stops mooing&#34;</span><span class="p">)</span>
-			<span class="nx">mootube</span> <span class="o">&lt;-</span> <span class="nx">Moo</span><span class="p">{</span><span class="nx">num</span><span class="p">,</span> <span class="s">&#34;mooh&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">}</span>
-			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Cow number&#34;</span><span class="p">,</span> <span class="nx">num</span><span class="p">,</span> <span class="s">&#34;moos one last time in relief&#34;</span><span class="p">)</span>
-			<span class="k">return</span>
-		<span class="k">default</span><span class="p">:</span>
-			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Cow number&#34;</span><span class="p">,</span> <span class="nx">num</span><span class="p">,</span> <span class="s">&#34;mooed through the mootube and was ignored&#34;</span><span class="p">)</span>
-			<span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">(</span><span class="nx">rand</span><span class="p">.</span><span class="nx">Int31n</span><span class="p">(</span><span class="mi">1000</span><span class="p">))</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Millisecond</span><span class="p">)</span>
-		<span class="p">}</span>
-	<span class="p">}</span>
+    <span class="nx">tube</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">bool</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">{</span>
+        <span class="k">select</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="nx">mootube</span> <span class="o">&lt;-</span> <span class="nx">Moo</span><span class="p">{</span><span class="nx">num</span><span class="p">,</span> <span class="s">&#34;moo&#34;</span><span class="p">,</span> <span class="nx">tube</span><span class="p">}:</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Cow number&#34;</span><span class="p">,</span> <span class="nx">num</span><span class="p">,</span> <span class="s">&#34;mooed through the mootube&#34;</span><span class="p">)</span>
+            <span class="o">&lt;-</span><span class="nx">tube</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Cow number&#34;</span><span class="p">,</span> <span class="nx">num</span><span class="p">,</span> <span class="s">&#34;is being milked and stops mooing&#34;</span><span class="p">)</span>
+            <span class="nx">mootube</span> <span class="o">&lt;-</span> <span class="nx">Moo</span><span class="p">{</span><span class="nx">num</span><span class="p">,</span> <span class="s">&#34;mooh&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">}</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Cow number&#34;</span><span class="p">,</span> <span class="nx">num</span><span class="p">,</span> <span class="s">&#34;moos one last time in relief&#34;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">default</span><span class="p">:</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Cow number&#34;</span><span class="p">,</span> <span class="nx">num</span><span class="p">,</span> <span class="s">&#34;mooed through the mootube and was ignored&#34;</span><span class="p">)</span>
+            <span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">(</span><span class="nx">rand</span><span class="p">.</span><span class="nx">Int31n</span><span class="p">(</span><span class="mi">1000</span><span class="p">))</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Millisecond</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="c1">// The farmer wants to turn on all the milktubes to stop the mooing
 </span><span class="c1"></span><span class="kd">func</span> <span class="nx">farmer</span><span class="p">(</span><span class="nx">numcows</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">mootube</span> <span class="kd">chan</span> <span class="nx">Moo</span><span class="p">,</span> <span class="nx">farmertube</span> <span class="kd">chan</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
-	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Farmer starts listening to the mootube&#34;</span><span class="p">)</span>
-	<span class="k">for</span> <span class="nx">unrelievedCows</span> <span class="o">:=</span> <span class="nx">numcows</span><span class="p">;</span> <span class="nx">unrelievedCows</span> <span class="p">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="p">{</span>
-		<span class="nx">moo</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">mootube</span>
-		<span class="k">if</span> <span class="nx">moo</span><span class="p">.</span><span class="nx">Sound</span> <span class="o">==</span> <span class="s">&#34;mooh&#34;</span> <span class="p">{</span>
-			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Farmer heard a moo of relief from cow number&#34;</span><span class="p">,</span> <span class="nx">moo</span><span class="p">.</span><span class="nx">Cow</span><span class="p">)</span>
-			<span class="nx">unrelievedCows</span><span class="o">--</span>
-		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Farmer heard a&#34;</span><span class="p">,</span> <span class="nx">moo</span><span class="p">.</span><span class="nx">Sound</span><span class="p">,</span> <span class="s">&#34;from cow number&#34;</span><span class="p">,</span> <span class="nx">moo</span><span class="p">.</span><span class="nx">Cow</span><span class="p">)</span>
-			<span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="mf">2e9</span><span class="p">)</span>
-			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Farmer starts the milking machine on cow number&#34;</span><span class="p">,</span> <span class="nx">moo</span><span class="p">.</span><span class="nx">Cow</span><span class="p">)</span>
-			<span class="nx">moo</span><span class="p">.</span><span class="nx">Tube</span> <span class="o">&lt;-</span> <span class="kc">true</span>
-		<span class="p">}</span>
-	<span class="p">}</span>
-	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Farmer doesn&#39;t hear a single moo anymore. All done!&#34;</span><span class="p">)</span>
-	<span class="nx">farmertube</span> <span class="o">&lt;-</span> <span class="s">&#34;yey!&#34;</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Farmer starts listening to the mootube&#34;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="nx">unrelievedCows</span> <span class="o">:=</span> <span class="nx">numcows</span><span class="p">;</span> <span class="nx">unrelievedCows</span> <span class="p">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="p">{</span>
+        <span class="nx">moo</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">mootube</span>
+        <span class="k">if</span> <span class="nx">moo</span><span class="p">.</span><span class="nx">Sound</span> <span class="o">==</span> <span class="s">&#34;mooh&#34;</span> <span class="p">{</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Farmer heard a moo of relief from cow number&#34;</span><span class="p">,</span> <span class="nx">moo</span><span class="p">.</span><span class="nx">Cow</span><span class="p">)</span>
+            <span class="nx">unrelievedCows</span><span class="o">--</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Farmer heard a&#34;</span><span class="p">,</span> <span class="nx">moo</span><span class="p">.</span><span class="nx">Sound</span><span class="p">,</span> <span class="s">&#34;from cow number&#34;</span><span class="p">,</span> <span class="nx">moo</span><span class="p">.</span><span class="nx">Cow</span><span class="p">)</span>
+            <span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="mf">2e9</span><span class="p">)</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Farmer starts the milking machine on cow number&#34;</span><span class="p">,</span> <span class="nx">moo</span><span class="p">.</span><span class="nx">Cow</span><span class="p">)</span>
+            <span class="nx">moo</span><span class="p">.</span><span class="nx">Tube</span> <span class="o">&lt;-</span> <span class="kc">true</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Farmer doesn&#39;t hear a single moo anymore. All done!&#34;</span><span class="p">)</span>
+    <span class="nx">farmertube</span> <span class="o">&lt;-</span> <span class="s">&#34;yey!&#34;</span>
 <span class="p">}</span>
 
 <span class="c1">// The farm starts out with mooing cows that wants to be milked
 </span><span class="c1"></span><span class="kd">func</span> <span class="nx">runFarm</span><span class="p">(</span><span class="nx">numcows</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
-	<span class="nx">farmertube</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">string</span><span class="p">)</span>
-	<span class="nx">mootube</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="nx">Moo</span><span class="p">)</span>
-	<span class="k">for</span> <span class="nx">cownum</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">cownum</span> <span class="p">&lt;</span> <span class="nx">numcows</span><span class="p">;</span> <span class="nx">cownum</span><span class="o">++</span> <span class="p">{</span>
-		<span class="k">go</span> <span class="nx">cow</span><span class="p">(</span><span class="nx">cownum</span><span class="p">,</span> <span class="nx">mootube</span><span class="p">)</span>
-	<span class="p">}</span>
-	<span class="k">go</span> <span class="nx">farmer</span><span class="p">(</span><span class="nx">numcows</span><span class="p">,</span> <span class="nx">mootube</span><span class="p">,</span> <span class="nx">farmertube</span><span class="p">)</span>
-	<span class="nx">farmerSaid</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">farmertube</span>
-	<span class="k">if</span> <span class="nx">farmerSaid</span> <span class="o">==</span> <span class="s">&#34;yey!&#34;</span> <span class="p">{</span>
-		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;All cows are happy.&#34;</span><span class="p">)</span>
-	<span class="p">}</span>
+    <span class="nx">farmertube</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">string</span><span class="p">)</span>
+    <span class="nx">mootube</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="nx">Moo</span><span class="p">)</span>
+    <span class="k">for</span> <span class="nx">cownum</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">cownum</span> <span class="p">&lt;</span> <span class="nx">numcows</span><span class="p">;</span> <span class="nx">cownum</span><span class="o">++</span> <span class="p">{</span>
+        <span class="k">go</span> <span class="nx">cow</span><span class="p">(</span><span class="nx">cownum</span><span class="p">,</span> <span class="nx">mootube</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">go</span> <span class="nx">farmer</span><span class="p">(</span><span class="nx">numcows</span><span class="p">,</span> <span class="nx">mootube</span><span class="p">,</span> <span class="nx">farmertube</span><span class="p">)</span>
+    <span class="nx">farmerSaid</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">farmertube</span>
+    <span class="k">if</span> <span class="nx">farmerSaid</span> <span class="o">==</span> <span class="s">&#34;yey!&#34;</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;All cows are happy.&#34;</span><span class="p">)</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="nx">runFarm</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;done&#34;</span><span class="p">)</span>
+    <span class="nx">runFarm</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;done&#34;</span><span class="p">)</span>
 <span class="p">}</span></pre></code><button onClick="location.href='vim.html'">Prev</button><button onClick="location.href='xcode.html'">Next</button><button onClick="location.href='all.html'">All</button><button onClick="location.href='index.html'">Overview</button></body></html>
