@@ -49,7 +49,7 @@ var styles = []string{
 
 const (
 	title         = "Chroma Style Gallery"
-	simpleCSS     = "body { font-family: sans-serif; margin: 4em; } .chroma { padding: 1em; } #main-headline { border-bottom: 3px solid red; margin-bottom: 2em; } a { color: #1E385B; } a:visited { color: #1E385B; } a:hover { color: #1D6142; }"
+	simpleCSS     = "body { font-family: sans-serif; margin: 4em; } .chroma { padding: 1em; } #main-headline { border-bottom: 3px solid red; margin-bottom: 2em; } a { color: #1E385B; } a:visited { color: #1E385B; } a:hover { color: #4682B4; }"
 	sampleContent = `<code><pre>
 package main
 
@@ -72,6 +72,7 @@ func footer() string {
 
 func main() {
 
+	// Generate a HTML page per style
 	for i, styleName := range styles {
 
 		// Generate a HTML document for the current style name
@@ -79,10 +80,10 @@ func main() {
 		inputBuffer.WriteString("<!doctype html><html><head><title>")
 		inputBuffer.WriteString(styleName)
 		inputBuffer.WriteString("</title><style>")
-		inputBuffer.WriteString(simpleCSS)
+		inputBuffer.WriteString(simpleCSS + " a { text-decoration: none; }  a:hover { color: #4682B4; }")
 		inputBuffer.WriteString("</style></head><body>")
 		inputBuffer.WriteString("<h1>")
-		inputBuffer.WriteString(styleName)
+		inputBuffer.WriteString("<a alt='View " + styleName + " on a page with all the styles' href='all.html#" + styleName + "'>" + styleName + "</a>")
 		inputBuffer.WriteString("</h1>")
 		inputBuffer.WriteString(sampleContent)
 
@@ -102,11 +103,11 @@ func main() {
 			inputBuffer.WriteString("<button disabled='true'>Next</button>")
 		}
 
-		// Button to the overview
-		inputBuffer.WriteString("<button onClick=\"location.href='index.html'\">Up</button>")
-
-		// Button to the single page
+		// Button to the to of the single page with all styles
 		inputBuffer.WriteString("<button onClick=\"location.href='all.html'\">All</button>")
+
+		// Button to the overview
+		inputBuffer.WriteString("<button onClick=\"location.href='index.html'\">Overview</button>")
 
 		inputBuffer.WriteString("</body></html>")
 
@@ -124,7 +125,7 @@ func main() {
 
 	}
 
-	// Generate an Index file for viewing the different styles
+	// Generate an Index file for listing the names of all the different styles
 	var buf bytes.Buffer
 	buf.WriteString("<!doctype html><html><head><title>")
 	buf.WriteString(title)
@@ -149,12 +150,13 @@ func main() {
 	buf.WriteString("<!doctype html><html><head><title>")
 	buf.WriteString(title)
 	buf.WriteString("</title><style>")
-	css := "body { font-family: sans-serif; margin: 4em; } h1 { border-bottom: 3px solid red; margin-bottom: 2em; } pre { display: inline-block; margin: 2em; padding: 3em 5em 3em 2em; box-shadow: 5px 5px 5px rgba(68, 68, 68, 0.6); border-radius: 7px; border: 2px solid black;} #stylelink:link { text-decoration: none; color: black; } #stylelink:visited { color: black; } #stylelink:hover { color: #1D6142; } a { color: #1E385B; }"
+	css := "body { font-family: sans-serif; margin: 4em; } h1 { border-bottom: 3px solid red; margin-bottom: 2em; } pre { display: inline-block; margin: 2em; padding: 3em 5em 3em 2em; box-shadow: 5px 5px 5px rgba(68, 68, 68, 0.6); border-radius: 7px; border: 2px solid black;} #stylelink:link { text-decoration: none; color: black; } #stylelink:visited { color: black; } #stylelink:hover { color: #4682B4; } a { color: #1E385B; }"
 	buf.WriteString(css)
 	buf.WriteString("</style></head><body><h1>")
 	buf.WriteString(title)
 	buf.WriteString("</h1>")
 	for _, styleName := range styles {
+		buf.WriteString("<a name='" + styleName + "'>") // HTML anchor
 		buf.WriteString("<h2>")
 		buf.WriteString("<a id='stylelink' href='" + styleName + ".html' alt='View only " + styleName + "'>" + styleName + "</a>")
 		buf.WriteString("</h2>")
@@ -179,6 +181,7 @@ func main() {
 				}
 			}
 		}
+		buf.WriteString("</a>") // HTML anchor
 		buf.Write(htmlBytes)
 	}
 	buf.WriteString("<p><a id='bottom' href='index.html' alt='Back to overview'>Back to overview</a></p>")
