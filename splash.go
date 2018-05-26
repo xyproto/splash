@@ -43,24 +43,23 @@ func UnescapeSplash(htmlData []byte, styleName string) ([]byte, error) {
 	return highlightPre(htmlData, styleName, true)
 }
 
-// Change the default language from "c" to something else. Must be supported by chroma.
+// SetDefaultLanguage changes the default language from "c" to something else. Must be supported by chroma.
 func SetDefaultLanguage(languageName string) {
 	defaultLanguage = languageName
 }
 
-// highlightPre takes HTML code as bytes and tries to syntax highlight code between
+// Highlight takes HTML code as bytes and tries to syntax highlight code between
 // <pre> and </pre> tags.
 //
 // "style" is a syntax highlight style, like "monokai".
 //
 // Full style list here: https://github.com/alecthomas/chroma/tree/master/styles
 //
-// Returns the modified HTML source code with embedded CSS as a <style> tag.
-// Requires the given HTML to contain </head> or <html>.
+// Returns the modified HTML source code and CSS style.
 //
 // unescape can be set to true for unescaping already escaped code in <pre> tags,
 // which can be useful when highlighting code in newly rendered markdown.
-func highlightPre(htmlData []byte, styleName string, unescape bool) ([]byte, error) {
+func Highlight(htmlData []byte, styleName string, unescape bool) ([]byte, []byte, error) {
 
 	// Try to use the given style name
 	style := styles.Get(styleName)
@@ -72,7 +71,7 @@ func highlightPre(htmlData []byte, styleName string, unescape bool) ([]byte, err
 	// Create a HTML formatter
 	formatter := chromaHTML.New(chromaHTML.WithClasses())
 	if formatter == nil {
-		return []byte{}, errors.New("Unable to instanciate chroma HTML formatter")
+		return []byte{}, []byte{}, errors.New("Unable to instanciate chroma HTML formatter")
 	}
 
 	var (
@@ -198,14 +197,36 @@ func highlightPre(htmlData []byte, styleName string, unescape bool) ([]byte, err
 	})
 
 	if outerErr != nil {
-		return []byte{}, outerErr
+		return []byte{}, []byte{}, outerErr
 	}
 
 	re = regexp.MustCompile(`(?s)/\*.*?\*/|\n`) // Strip comments and newlines
 	stripped := []byte(re.ReplaceAllString(cssBuf.String(), "$1"))
 
+	return mutableBytes, stripped, nil
+}
+
+// highlightPre takes HTML code as bytes and tries to syntax highlight code between
+// <pre> and </pre> tags.
+//
+// "style" is a syntax highlight style, like "monokai".
+//
+// Full style list here: https://github.com/alecthomas/chroma/tree/master/styles
+//
+// Returns the modified HTML source code with embedded CSS as a <style> tag.
+// Requires the given HTML to contain </head> or <html>.
+//
+// unescape can be set to true for unescaping already escaped code in <pre> tags,
+// which can be useful when highlighting code in newly rendered markdown.
+func highlightPre(htmlData []byte, styleName string, unescape bool) ([]byte, error) {
+
+	HTML, CSS, err := Highlight(htmlData, styleName, unescape)
+	if err != nil {
+		return []byte{}, err
+	}
+
 	// Add all the generated CSS to a <style> tag in the generated HTML, without newlines
-	htmlBytes, err := AddCSSToHTML(mutableBytes, stripped)
+	htmlBytes, err := AddCSSToHTML(HTML, CSS)
 	if err != nil {
 		return []byte{}, err
 	}
