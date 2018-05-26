@@ -70,7 +70,7 @@ func footer() string {
 	return buf.String()
 }
 
-func main() {
+func generateGallery(sampleContent, dirname string) {
 
 	// Generate a HTML page per style
 	for i, styleName := range styles {
@@ -118,7 +118,7 @@ func main() {
 		}
 
 		// Write the HTML sample for this style name
-		err = ioutil.WriteFile(styleName+".html", htmlBytes, 0644)
+		err = ioutil.WriteFile(dirname+"/"+styleName+".html", htmlBytes, 0644)
 		if err != nil {
 			panic(err)
 		}
@@ -139,8 +139,13 @@ func main() {
 	}
 	buf.WriteString("</ul>")
 	buf.WriteString("<p><a href='all.html' alt='All styles on one page'>All styles on one page</a></p>")
+	if dirname == "." {
+		buf.WriteString("<p><a href='longer/index.html' alt='Gallery with longer code samples'>Gallery with longer code samples</a></p>")
+	} else {
+		buf.WriteString("<p><a href='../index.html' alt='Gallery with shorter code samples'>Gallery with shorter code samples</a></p>")
+	}
 	buf.WriteString(footer())
-	err := ioutil.WriteFile("index.html", buf.Bytes(), 0644)
+	err := ioutil.WriteFile(dirname+"/"+"index.html", buf.Bytes(), 0644)
 	if err != nil {
 		panic(err)
 	}
@@ -185,10 +190,21 @@ func main() {
 		buf.Write(htmlBytes)
 	}
 	buf.WriteString("<p><a id='bottom' href='index.html' alt='Back to overview'>Back to overview</a></p>")
+	if dirname == "." {
+		buf.WriteString("<p><a id='bottom' href='longer/index.html' alt='Go to the other gallery'>Gallery with longer code samples</a></p>")
+	} else {
+		buf.WriteString("<p><a id='bottom' href='../index.html' alt='Go to the other gallery'>Gallery with shorter code samples</a></p>")
+	}
 	buf.WriteString(footer())
-	err = ioutil.WriteFile("all.html", buf.Bytes(), 0644)
+	err = ioutil.WriteFile(dirname+"/all.html", buf.Bytes(), 0644)
 	if err != nil {
 		panic(err)
 	}
 
+}
+
+func main() {
+	generateGallery(sampleContent, ".")
+	// TODO: Create directory first
+	generateGallery(longerSampleContent, "longer")
 }

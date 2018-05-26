@@ -1,0 +1,72 @@
+<!doctype html><html><head><style> .chroma { background-color: #ffffff } .chroma .err { color: #000000 } .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; } .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; } .chroma .hl { display: block; width: 100%; } .chroma .lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em; } .chroma .ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em; } .chroma .k { color: #a90d91 } .chroma .kc { color: #a90d91 } .chroma .kd { color: #a90d91 } .chroma .kn { color: #a90d91 } .chroma .kp { color: #a90d91 } .chroma .kr { color: #a90d91 } .chroma .kt { color: #a90d91 } .chroma .n { color: #000000 } .chroma .na { color: #836c28 } .chroma .nb { color: #a90d91 } .chroma .bp { color: #5b269a } .chroma .nc { color: #3f6e75 } .chroma .no { color: #000000 } .chroma .nd { color: #000000 } .chroma .ni { color: #000000 } .chroma .ne { color: #000000 } .chroma .nf { color: #000000 } .chroma .fm { color: #000000 } .chroma .nl { color: #000000 } .chroma .nn { color: #000000 } .chroma .nx { color: #000000 } .chroma .py { color: #000000 } .chroma .nt { color: #000000 } .chroma .nv { color: #000000 } .chroma .vc { color: #000000 } .chroma .vg { color: #000000 } .chroma .vi { color: #000000 } .chroma .vm { color: #000000 } .chroma .l { color: #1c01ce } .chroma .ld { color: #1c01ce } .chroma .s { color: #c41a16 } .chroma .sa { color: #c41a16 } .chroma .sb { color: #c41a16 } .chroma .sc { color: #2300ce } .chroma .dl { color: #c41a16 } .chroma .sd { color: #c41a16 } .chroma .s2 { color: #c41a16 } .chroma .se { color: #c41a16 } .chroma .sh { color: #c41a16 } .chroma .si { color: #c41a16 } .chroma .sx { color: #c41a16 } .chroma .sr { color: #c41a16 } .chroma .s1 { color: #c41a16 } .chroma .ss { color: #c41a16 } .chroma .m { color: #1c01ce } .chroma .mb { color: #1c01ce } .chroma .mf { color: #1c01ce } .chroma .mh { color: #1c01ce } .chroma .mi { color: #1c01ce } .chroma .il { color: #1c01ce } .chroma .mo { color: #1c01ce } .chroma .o { color: #000000 } .chroma .ow { color: #000000 } .chroma .c { color: #177500 } .chroma .ch { color: #177500 } .chroma .cm { color: #177500 } .chroma .c1 { color: #177500 } .chroma .cs { color: #177500 } .chroma .cp { color: #633820 } .chroma .cpf { color: #633820 }</style>
+<title>xcode</title><style>body { font-family: sans-serif; margin: 4em; } .chroma { padding: 1em; } #main-headline { border-bottom: 3px solid red; margin-bottom: 2em; } a { color: #1E385B; } a:visited { color: #1E385B; } a:hover { color: #4682B4; } a { text-decoration: none; }  a:hover { color: #4682B4; }</style></head><body><h1><a alt='View xcode on a page with all the styles' href='all.html#xcode'>xcode</a></h1><code><pre class="chroma">
+<span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;fmt&#34;</span>
+	<span class="s">&#34;math/rand&#34;</span>
+	<span class="s">&#34;time&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">Moo</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Cow</span>   <span class="kt">int</span>
+	<span class="nx">Sound</span> <span class="kt">string</span>
+	<span class="nx">Tube</span>  <span class="kd">chan</span> <span class="kt">bool</span>
+<span class="p">}</span>
+
+<span class="c1">// A cow will moo until it is being milked
+</span><span class="c1"></span><span class="kd">func</span> <span class="nx">cow</span><span class="p">(</span><span class="nx">num</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">mootube</span> <span class="kd">chan</span> <span class="nx">Moo</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">tube</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">bool</span><span class="p">)</span>
+	<span class="k">for</span> <span class="p">{</span>
+		<span class="k">select</span> <span class="p">{</span>
+		<span class="k">case</span> <span class="nx">mootube</span> <span class="o">&lt;-</span> <span class="nx">Moo</span><span class="p">{</span><span class="nx">num</span><span class="p">,</span> <span class="s">&#34;moo&#34;</span><span class="p">,</span> <span class="nx">tube</span><span class="p">}:</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Cow number&#34;</span><span class="p">,</span> <span class="nx">num</span><span class="p">,</span> <span class="s">&#34;mooed through the mootube&#34;</span><span class="p">)</span>
+			<span class="o">&lt;-</span><span class="nx">tube</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Cow number&#34;</span><span class="p">,</span> <span class="nx">num</span><span class="p">,</span> <span class="s">&#34;is being milked and stops mooing&#34;</span><span class="p">)</span>
+			<span class="nx">mootube</span> <span class="o">&lt;-</span> <span class="nx">Moo</span><span class="p">{</span><span class="nx">num</span><span class="p">,</span> <span class="s">&#34;mooh&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">}</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Cow number&#34;</span><span class="p">,</span> <span class="nx">num</span><span class="p">,</span> <span class="s">&#34;moos one last time in relief&#34;</span><span class="p">)</span>
+			<span class="k">return</span>
+		<span class="k">default</span><span class="p">:</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Cow number&#34;</span><span class="p">,</span> <span class="nx">num</span><span class="p">,</span> <span class="s">&#34;mooed through the mootube and was ignored&#34;</span><span class="p">)</span>
+			<span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">(</span><span class="nx">rand</span><span class="p">.</span><span class="nx">Int31n</span><span class="p">(</span><span class="mi">1000</span><span class="p">))</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Millisecond</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// The farmer wants to turn on all the milktubes to stop the mooing
+</span><span class="c1"></span><span class="kd">func</span> <span class="nx">farmer</span><span class="p">(</span><span class="nx">numcows</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">mootube</span> <span class="kd">chan</span> <span class="nx">Moo</span><span class="p">,</span> <span class="nx">farmertube</span> <span class="kd">chan</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Farmer starts listening to the mootube&#34;</span><span class="p">)</span>
+	<span class="k">for</span> <span class="nx">unrelievedCows</span> <span class="o">:=</span> <span class="nx">numcows</span><span class="p">;</span> <span class="nx">unrelievedCows</span> <span class="p">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="p">{</span>
+		<span class="nx">moo</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">mootube</span>
+		<span class="k">if</span> <span class="nx">moo</span><span class="p">.</span><span class="nx">Sound</span> <span class="o">==</span> <span class="s">&#34;mooh&#34;</span> <span class="p">{</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Farmer heard a moo of relief from cow number&#34;</span><span class="p">,</span> <span class="nx">moo</span><span class="p">.</span><span class="nx">Cow</span><span class="p">)</span>
+			<span class="nx">unrelievedCows</span><span class="o">--</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Farmer heard a&#34;</span><span class="p">,</span> <span class="nx">moo</span><span class="p">.</span><span class="nx">Sound</span><span class="p">,</span> <span class="s">&#34;from cow number&#34;</span><span class="p">,</span> <span class="nx">moo</span><span class="p">.</span><span class="nx">Cow</span><span class="p">)</span>
+			<span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="mf">2e9</span><span class="p">)</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Farmer starts the milking machine on cow number&#34;</span><span class="p">,</span> <span class="nx">moo</span><span class="p">.</span><span class="nx">Cow</span><span class="p">)</span>
+			<span class="nx">moo</span><span class="p">.</span><span class="nx">Tube</span> <span class="o">&lt;-</span> <span class="kc">true</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;Farmer doesn&#39;t hear a single moo anymore. All done!&#34;</span><span class="p">)</span>
+	<span class="nx">farmertube</span> <span class="o">&lt;-</span> <span class="s">&#34;yey!&#34;</span>
+<span class="p">}</span>
+
+<span class="c1">// The farm starts out with mooing cows that wants to be milked
+</span><span class="c1"></span><span class="kd">func</span> <span class="nx">runFarm</span><span class="p">(</span><span class="nx">numcows</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">farmertube</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">string</span><span class="p">)</span>
+	<span class="nx">mootube</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="nx">Moo</span><span class="p">)</span>
+	<span class="k">for</span> <span class="nx">cownum</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">cownum</span> <span class="p">&lt;</span> <span class="nx">numcows</span><span class="p">;</span> <span class="nx">cownum</span><span class="o">++</span> <span class="p">{</span>
+		<span class="k">go</span> <span class="nx">cow</span><span class="p">(</span><span class="nx">cownum</span><span class="p">,</span> <span class="nx">mootube</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">go</span> <span class="nx">farmer</span><span class="p">(</span><span class="nx">numcows</span><span class="p">,</span> <span class="nx">mootube</span><span class="p">,</span> <span class="nx">farmertube</span><span class="p">)</span>
+	<span class="nx">farmerSaid</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">farmertube</span>
+	<span class="k">if</span> <span class="nx">farmerSaid</span> <span class="o">==</span> <span class="s">&#34;yey!&#34;</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;All cows are happy.&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">runFarm</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&#34;done&#34;</span><span class="p">)</span>
+<span class="p">}</span></pre></code><button onClick="location.href='vs.html'">Prev</button><button disabled='true'>Next</button><button onClick="location.href='all.html'">All</button><button onClick="location.href='index.html'">Overview</button></body></html>
