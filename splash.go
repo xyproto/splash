@@ -17,7 +17,7 @@ import (
 var (
 	errHEAD = errors.New("HTML should contain <head> or <html> when adding CSS")
 
-	defaultLanguage = "c"
+	defaultLanguage = "shell"
 )
 
 // Splash takes HTML code as bytes and tries to syntax highlight code between
@@ -43,7 +43,7 @@ func UnescapeSplash(htmlData []byte, styleName string) ([]byte, error) {
 	return highlightPre(htmlData, styleName, true)
 }
 
-// SetDefaultLanguage changes the default language from "c" to something else. Must be supported by chroma.
+// SetDefaultLanguage changes the default language from "shell" to something else. Must be supported by chroma.
 func SetDefaultLanguage(languageName string) {
 	defaultLanguage = languageName
 }
