@@ -1,19 +1,19 @@
-package j
+package v
 
 import (
 	. "github.com/alecthomas/chroma" // nolint
 	"github.com/alecthomas/chroma/lexers/internal"
 )
 
-// JSX lexer.
+// Vue lexer.
 //
-// This was generated from https://github.com/fcurella/jsx-lexer
-var JSX = internal.Register(MustNewLexer(
+// This was generated from https://github.com/testdrivenio/vue-lexer
+var Vue = internal.Register(MustNewLexer(
 	&Config{
-		Name:      "react",
-		Aliases:   []string{"jsx", "react"},
-		Filenames: []string{"*.jsx", "*.react"},
-		MimeTypes: []string{"text/jsx", "text/typescript-jsx"},
+		Name:      "vue",
+		Aliases:   []string{"vue", "vuejs"},
+		Filenames: []string{"*.vue"},
+		MimeTypes: []string{"text/x-vue", "application/x-vue"},
 		DotAll:    true,
 	},
 	Rules{
@@ -33,7 +33,7 @@ var JSX = internal.Register(MustNewLexer(
 			{`\n`, Text, Pop(1)},
 		},
 		"root": {
-			Include("jsx"),
+			Include("vue"),
 			{`\A#! ?/.*?\n`, CommentHashbang, nil},
 			{`^(?=\s|/|<!--)`, Text, Push("slashstartsregex")},
 			Include("commentsandwhitespace"),
@@ -68,12 +68,25 @@ var JSX = internal.Register(MustNewLexer(
 			{`\}`, LiteralStringInterpol, Pop(1)},
 			Include("root"),
 		},
-		"jsx": {
+		"vue": {
 			{`(<)([\w]+)`, ByGroups(Punctuation, NameTag), Push("tag")},
 			{`(<)(/)([\w]+)(>)`, ByGroups(Punctuation, Punctuation, NameTag, Punctuation), nil},
 		},
 		"tag": {
 			{`\s+`, Text, nil},
+			{`(-)([\w]+)`, NameTag, nil},
+			{`(@[\w]+)(="[\S]+")(>)`, ByGroups(NameTag, LiteralString, Punctuation), nil},
+			{`(@[\w]+)(="[\S]+")`, ByGroups(NameTag, LiteralString), nil},
+			{`(@[\S]+)(="[\S]+")`, ByGroups(NameTag, LiteralString), nil},
+			{`(:[\S]+)(="[\S]+")`, ByGroups(NameTag, LiteralString), nil},
+			{`(:)`, Operator, nil},
+			{`(v-b-[\S]+)`, NameTag, nil},
+			{`(v-[\w]+)(=".+)([:][\w]+)(="[\w]+")(>)`, ByGroups(NameTag, LiteralString, NameTag, LiteralString, Punctuation), nil},
+			{`(v-[\w]+)(="[\S]+")(>)`, ByGroups(NameTag, LiteralString, Punctuation), nil},
+			{`(v-[\w]+)(>)`, ByGroups(NameTag, Punctuation), nil},
+			{`(v-[\w]+)(=".+")(>)`, ByGroups(NameTag, LiteralString, Punctuation), nil},
+			{`(<)([\w]+)`, ByGroups(Punctuation, NameTag), nil},
+			{`(<)(/)([\w]+)(>)`, ByGroups(Punctuation, Punctuation, NameTag, Punctuation), nil},
 			{`([\w]+\s*)(=)(\s*)`, ByGroups(NameAttribute, Operator, Text), Push("attr")},
 			{`[{}]+`, Punctuation, nil},
 			{`[\w\.]+`, NameAttribute, nil},

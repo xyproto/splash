@@ -1,8 +1,7 @@
-# github.com/alecthomas/chroma v0.6.3
+# github.com/alecthomas/chroma v0.6.8
 github.com/alecthomas/chroma
 github.com/alecthomas/chroma/formatters/html
 github.com/alecthomas/chroma/lexers
-github.com/alecthomas/chroma/styles
 github.com/alecthomas/chroma/lexers/a
 github.com/alecthomas/chroma/lexers/b
 github.com/alecthomas/chroma/lexers/c
@@ -29,9 +28,10 @@ github.com/alecthomas/chroma/lexers/v
 github.com/alecthomas/chroma/lexers/w
 github.com/alecthomas/chroma/lexers/x
 github.com/alecthomas/chroma/lexers/y
+github.com/alecthomas/chroma/styles
 # github.com/danwakefield/fnmatch v0.0.0-20160403171240-cbb64ac3d964
 github.com/danwakefield/fnmatch
-# github.com/dlclark/regexp2 v1.1.6
+# github.com/dlclark/regexp2 v1.2.0
 github.com/dlclark/regexp2
 github.com/dlclark/regexp2/syntax
 # github.com/russross/blackfriday v2.0.0+incompatible
