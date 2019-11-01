@@ -2,8 +2,10 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/xyproto/splash"
 	"io/ioutil"
+	"os"
 	"time"
 )
 
@@ -204,6 +206,10 @@ func generateGallery(sampleContent, dirname string) {
 }
 
 func main() {
+	if err := os.Chdir("../../docs"); err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+		os.Exit(1)
+	}
 	generateGallery(sampleContent, ".")
 	// TODO: Create directory first
 	generateGallery(longerSampleContent, "longer")
