@@ -15,7 +15,7 @@ type Moo struct {
     Tube  chan bool
 }
 
-// A cow will moo until it is being milked
+// A cow will moo until it is being fed
 func cow(num int, mootube chan Moo) {
     tube := make(chan bool)
     for {
@@ -23,9 +23,9 @@ func cow(num int, mootube chan Moo) {
         case mootube <- Moo{num, "moo", tube}:
             fmt.Println("Cow number", num, "mooed through the mootube")
             <-tube
-            fmt.Println("Cow number", num, "is being milked and stops mooing")
+            fmt.Println("Cow number", num, "is being fed and stops mooing")
             mootube <- Moo{num, "mooh", nil}
-            fmt.Println("Cow number", num, "moos one last time in relief")
+            fmt.Println("Cow number", num, "moos one last time out of happyness")
             return
         default:
             fmt.Println("Cow number", num, "mooed through the mootube and was ignored")
@@ -34,18 +34,18 @@ func cow(num int, mootube chan Moo) {
     }
 }
 
-// The farmer wants to turn on all the milktubes to stop the mooing
+// The farmer wants to put food in all the mootubes to stop the mooing
 func farmer(numcows int, mootube chan Moo, farmertube chan string) {
     fmt.Println("Farmer starts listening to the mootube")
-    for unrelievedCows := numcows; unrelievedCows > 0; {
+    for hungryCows := numcows; hungryCows > 0; {
         moo := <-mootube
         if moo.Sound == "mooh" {
             fmt.Println("Farmer heard a moo of relief from cow number", moo.Cow)
-            unrelievedCows--
+            hungryCows--
         } else {
             fmt.Println("Farmer heard a", moo.Sound, "from cow number", moo.Cow)
             time.Sleep(2e9)
-            fmt.Println("Farmer starts the milking machine on cow number", moo.Cow)
+            fmt.Println("Farmer starts feeding cow number", moo.Cow)
             moo.Tube <- true
         }
     }
@@ -53,7 +53,7 @@ func farmer(numcows int, mootube chan Moo, farmertube chan string) {
     farmertube <- "yey!"
 }
 
-// The farm starts out with mooing cows that wants to be milked
+// The farm starts out with mooing cows that wants to be fed
 func runFarm(numcows int) {
     farmertube := make(chan string)
     mootube := make(chan Moo)
