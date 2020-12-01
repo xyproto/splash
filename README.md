@@ -42,4 +42,4 @@ See the [Style Gallery](https://xyproto.github.io/splash/docs/) for a full overv
 
 * Version: 1.1.4
 * License: MIT
-* Author: Alexander F Rødseth &lt;xyproto@archlinux.org&gt;
+* Author: Alexander F. Rødseth &lt;xyproto@archlinux.org&gt;
