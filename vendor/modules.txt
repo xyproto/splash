@@ -1,4 +1,4 @@
-# github.com/alecthomas/chroma v0.8.2
+# github.com/alecthomas/chroma v0.10.0
 github.com/alecthomas/chroma
 github.com/alecthomas/chroma/formatters/html
 github.com/alecthomas/chroma/lexers
@@ -30,8 +30,6 @@ github.com/alecthomas/chroma/lexers/x
 github.com/alecthomas/chroma/lexers/y
 github.com/alecthomas/chroma/lexers/z
 github.com/alecthomas/chroma/styles
-# github.com/danwakefield/fnmatch v0.0.0-20160403171240-cbb64ac3d964
-github.com/danwakefield/fnmatch
 # github.com/dlclark/regexp2 v1.4.0
 github.com/dlclark/regexp2
 github.com/dlclark/regexp2/syntax
