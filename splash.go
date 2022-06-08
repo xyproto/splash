@@ -180,7 +180,11 @@ func Highlight(htmlData []byte, styleName string, unescape bool) ([]byte, []byte
 			if bytes.HasPrefix(hiBytes, []byte(`<pre class="chroma">`)) && bytes.HasSuffix(hiBytes, []byte("</pre>")) {
 				// Remove the leading <pre class="chroma"> and the trailing </pre> tag
 				hiBytes = hiBytes[len(`<pre class="chroma">`) : hlen-len("</pre>")]
+			} else if bytes.HasPrefix(hiBytes, []byte(`<pre tabindex="0" class="chroma">`)) && bytes.HasSuffix(hiBytes, []byte("</pre>")) {
+				// Remove the leading <pre class="chroma"> and the trailing </pre> tag
+				hiBytes = hiBytes[len(`<pre tabindex="0" class="chroma">`) : hlen-len("</pre>")]
 			}
+
 		}
 
 		if strippedCodeTag || strippedLongerCodeTag {
@@ -193,8 +197,15 @@ func Highlight(htmlData []byte, styleName string, unescape bool) ([]byte, []byte
 			hiBytes = []byte(`<pre class="chroma">` + string(hiBytes) + "</pre>")
 		}
 
-		// TODO: This is a hack. Find a cleaner way.
-		hiBytes = bytes.ReplaceAll(hiBytes, []byte("<pre class=\"chroma\"><code><pre tabindex=\"0\" class=\"chroma\"><code>"), []byte("<pre tabindex=\"0\" class=\"chroma\"><code>"))
+		// TODO: This is a hack! Find a cleaner way.
+		to := []byte("<pre tabindex=\"0\" class=\"chroma\"><code>")
+		from := []byte(`<code><pre class="chroma"><code><pre tabindex="0" class="chroma"><code>`)
+		hiBytes = bytes.ReplaceAll(hiBytes, from, to)
+		from = []byte(`<code><pre style="background-color: #ffffff;" class="chroma"><pre style="background-color: #ffffff;" tabindex="0" class="chroma"><code>`)
+		hiBytes = bytes.ReplaceAll(hiBytes, from, to)
+		from = []byte(`<code><pre class="chroma"><pre tabindex="0" class="chroma"><code>`)
+		hiBytes = bytes.ReplaceAll(hiBytes, from, to)
+
 		hiBytes = bytes.ReplaceAll(hiBytes, []byte("</code></pre></code></pre>"), []byte("</code></pre>"))
 
 		return hiBytes
