@@ -71,7 +71,7 @@ func Highlight(htmlData []byte, styleName string, unescape bool) ([]byte, []byte
 	// Create a HTML formatter
 	formatter := chromaHTML.New(chromaHTML.WithClasses(true))
 	if formatter == nil {
-		return []byte{}, []byte{}, errors.New("Unable to instanciate chroma HTML formatter")
+		return []byte{}, []byte{}, errors.New("unable to instanciate the Chroma HTML formatter")
 	}
 
 	var (
