@@ -18,6 +18,7 @@ var styles = []string{
 	"autumn",
 	"borland",
 	"bw",
+	"catpuccin",
 	"colorful",
 	"dracula",
 	"emacs",
