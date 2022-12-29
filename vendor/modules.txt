@@ -30,7 +30,7 @@ github.com/alecthomas/chroma/lexers/x
 github.com/alecthomas/chroma/lexers/y
 github.com/alecthomas/chroma/lexers/z
 github.com/alecthomas/chroma/styles
-# github.com/dlclark/regexp2 v1.4.0
+# github.com/dlclark/regexp2 v1.7.0
 github.com/dlclark/regexp2
 github.com/dlclark/regexp2/syntax
 # github.com/russross/blackfriday v1.5.3-0.20190616195246-a925a152c144
