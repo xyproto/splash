@@ -30,6 +30,8 @@ jobs:
           ./gendoc
       - name: Commit and push changes
         run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
           git add docs
           git commit -m "Update Chroma styles"
           git push
