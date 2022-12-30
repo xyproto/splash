@@ -9,51 +9,6 @@ import (
 	"time"
 )
 
-var styles = []string{
-	"abap",
-	"algol",
-	"algol_nu",
-	"api",
-	"arduino",
-	"autumn",
-	"borland",
-	"bw",
-	"catpuccin",
-	"colorful",
-	"dracula",
-	"emacs",
-        "frappe",
-	"friendly",
-	"fruity",
-	"github",
-	"igor",
-        "latte",
-	"lovelace",
-        "macchiato",
-	"manni",
-        "mocha",
-	"monokai",
-	"monokailight",
-	"murphy",
-	"native",
-	"paraiso-dark",
-	"paraiso-light",
-	"pastie",
-	"perldoc",
-	"pygments",
-	"rainbow_dash",
-	"rrt",
-	"solarized-dark",
-	"solarized-dark256",
-	"solarized-light",
-	"swapoff",
-	"tango",
-	"trac",
-	"vim",
-	"vs",
-	"xcode",
-}
-
 const (
 	title         = "Chroma Style Gallery"
 	simpleCSS     = "body { font-family: sans-serif; margin: 4em; } .chroma { padding: 1em; } #main-headline { border-bottom: 3px solid red; margin-bottom: 2em; } a { color: #1E385B; } a:visited { color: #1E385B; } a:hover { color: #4682B4; }"
