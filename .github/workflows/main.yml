@@ -21,9 +21,13 @@ jobs:
       - name: Run selfupdate
         run: ./selfupdate
       - name: Build gendoc
-        run: go build -o gendoc cmd/gendoc/main.go
+        run: |
+          cd cmd/gendoc
+          go build -mod=vendor
       - name: Run gendoc
-        run: ./gendoc
+        run: |
+          ./gendoc
+          cd ../..
       - name: Commit and push changes
         run: |
           git add docs
