@@ -1,0 +1,31 @@
+name: Update Chroma Styles
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # Run daily at midnight
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: "1.16"
+      - name: Build selfupdate
+        run: go build -o selfupdate cmd/selfupdate/main.go
+      - name: Run selfupdate
+        run: ./selfupdate
+      - name: Build gendoc
+        run: go build -o gendoc cmd/gendoc/main.go
+      - name: Run gendoc
+        run: ./gendoc
+      - name: Commit and push changes
+        run: |
+          git add docs
+          git commit -m "Update Chroma styles"
+          git push
