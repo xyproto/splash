@@ -26,8 +26,8 @@ jobs:
           go build -mod=vendor
       - name: Run gendoc
         run: |
+          cd cmd/gendoc
           ./gendoc
-          cd ../..
       - name: Commit and push changes
         run: |
           git add docs
