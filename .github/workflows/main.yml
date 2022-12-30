@@ -24,7 +24,7 @@ jobs:
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
           git add go.* vendor || true
-          git commit -m "Update dependencies"
+          git commit -m "Update dependencies" || true
       - name: Build selfupdate
         run: |
           cd cmd/selfupdate
@@ -44,5 +44,5 @@ jobs:
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
           git add docs || true
-          git commit -m "Update Chroma styles"
+          git commit -m "Update Chroma styles" || true
           git push
