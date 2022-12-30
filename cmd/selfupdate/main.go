@@ -4,17 +4,15 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"regexp"
 	"strings"
 )
 
 const (
-	stylesSourceFile = "../gendoc/styles.go"
+	stylesSourceFile = "cmd/gendoc/styles.go"
 	styleListWebPage = "https://github.com/alecthomas/chroma/tree/master/styles"
 )
 
@@ -31,24 +29,6 @@ func fetchPage() (string, error) {
 		return "", err
 	}
 	return string(body), nil
-}
-
-func writeStylesToFile(styleNames []string, filePath string) error {
-	// Open the file for writing
-	f, err := os.Create(filePath)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	// Write the double quoted style names to the file
-	for _, styleName := range styleNames {
-		if _, err := fmt.Fprintf(f, "\"%s\",\n", styleName); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
 
 func extractStyleNames(htmlContent string) []string {
