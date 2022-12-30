@@ -16,6 +16,11 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: "1.19"
+      - name: Update Chroma
+        run: |
+          go get github.com/alecthomas/chroma@master
+          go mod tidy
+          go mod vendor
       - name: Build selfupdate
         run: go build -o selfupdate cmd/selfupdate/main.go
       - name: Run selfupdate
@@ -32,6 +37,7 @@ jobs:
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-          git add docs
+          git add docs || true
+          git add go.* vendor || true
           git commit -m "Update Chroma styles"
           git push
