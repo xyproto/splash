@@ -16,9 +16,9 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: "1.19"
-      - name: Update Chroma
+      - name: Update the Chroma dependency to the latest master commit
         run: |
-          go get github.com/alecthomas/chroma@latest
+          go get github.com/alecthomas/chroma@$(git ls-remote --refs --heads https://github.com/alecthomas/chroma master | cut -f1)
           go mod tidy
           go mod vendor
           git config --global user.email "action@github.com"
