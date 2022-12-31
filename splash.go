@@ -205,6 +205,9 @@ func Highlight(htmlData []byte, styleName string, unescape bool) ([]byte, []byte
 		hiBytes = bytes.ReplaceAll(hiBytes, from, to)
 		from = []byte(`<code><pre class="chroma"><pre tabindex="0" class="chroma"><code>`)
 		hiBytes = bytes.ReplaceAll(hiBytes, from, to)
+		from = []byte(`<code><code>`)
+		to = []byte(`<code>`)
+		hiBytes = bytes.ReplaceAll(hiBytes, from, to)
 
 		hiBytes = bytes.ReplaceAll(hiBytes, []byte("</code></pre></code></pre>"), []byte("</code></pre>"))
 
