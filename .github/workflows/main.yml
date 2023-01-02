@@ -44,4 +44,4 @@ jobs:
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
           git add docs || true
-          git log -1 --pretty=%B | grep -q "Update the Chroma style gallery" || git commit -m "Update the Chroma style gallery" && git push
+          git log -1 --pretty=%B | grep -q "Update the Chroma style gallery" || git commit -m "Update the Chroma style gallery" && git push || true
