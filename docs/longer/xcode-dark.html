@@ -1,302 +1,37 @@
 <!doctype html><html><head><style> .bg { color: #ffffff; background-color: #1f1f24; } .chroma { color: #ffffff; background-color: #1f1f24; } .chroma .err { color: #960050 } .chroma .lnlinks { outline: none; text-decoration: none; color: inherit } .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; } .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; } .chroma .hl { background-color: #353539 } .chroma .lnt { white-space: pre; -webkit-user-select: none; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f } .chroma .ln { white-space: pre; -webkit-user-select: none; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f } .chroma .line { display: flex; } .chroma .k { color: #fc5fa3 } .chroma .kc { color: #fc5fa3 } .chroma .kd { color: #fc5fa3 } .chroma .kn { color: #fc5fa3 } .chroma .kp { color: #fc5fa3 } .chroma .kr { color: #fc5fa3 } .chroma .kt { color: #fc5fa3 } .chroma .nb { color: #d0a8ff } .chroma .bp { color: #a167e6 } .chroma .nc { color: #5dd8ff } .chroma .nf { color: #41a1c0 } .chroma .nv { color: #41a1c0 } .chroma .s { color: #fc6a5d } .chroma .sa { color: #fc6a5d } .chroma .sb { color: #fc6a5d } .chroma .sc { color: #fc6a5d } .chroma .dl { color: #fc6a5d } .chroma .sd { color: #fc6a5d } .chroma .s2 { color: #fc6a5d } .chroma .se { color: #fc6a5d } .chroma .sh { color: #fc6a5d } .chroma .sx { color: #fc6a5d } .chroma .sr { color: #fc6a5d } .chroma .s1 { color: #fc6a5d } .chroma .ss { color: #fc6a5d } .chroma .m { color: #d0bf69 } .chroma .mb { color: #d0bf69 } .chroma .mf { color: #d0bf69 } .chroma .mh { color: #d0bf69 } .chroma .mi { color: #d0bf69 } .chroma .il { color: #d0bf69 } .chroma .mo { color: #d0bf69 } .chroma .c { color: #6c7986 } .chroma .ch { color: #6c7986 } .chroma .cm { color: #6c7986 } .chroma .c1 { color: #6c7986 } .chroma .cs { color: #6c7986; font-style: italic } .chroma .cp { color: #fd8f3f } .chroma .cpf { color: #fd8f3f }</style>
 <title>xcode-dark</title><style>body { font-family: sans-serif; margin: 4em; } .chroma { padding: 1em; } #main-headline { border-bottom: 3px solid red; margin-bottom: 2em; } a { color: #1E385B; } a:visited { color: #1E385B; } a:hover { color: #4682B4; } a { text-decoration: none; }  a:hover { color: #4682B4; }</style></head><body><h1><a alt='View xcode-dark on a page with all the styles' href='all.html#xcode-dark'>xcode-dark</a></h1><code><pre class="chroma"><code><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">#include &lt;ctype.h&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#include &lt;err.h&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#include &lt;errno.h&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#include &lt;getopt.h&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#include &lt;inttypes.h&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#include &lt;stdbool.h&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#include &lt;stdio.h&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#include &lt;stdlib.h&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#include &lt;string.h&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#include &lt;sys/syscall.h&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#include &lt;unistd.h&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">static const char* <span class="nv">version_string</span> <span class="o">=</span> <span class="s2">&#34;tinyionice 1.0.4&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">enum <span class="o">{</span>
-</span></span><span class="line"><span class="cl">    IOPRIO_CLASS_NONE,
-</span></span><span class="line"><span class="cl">    IOPRIO_CLASS_RT,
-</span></span><span class="line"><span class="cl">    IOPRIO_CLASS_BE,
-</span></span><span class="line"><span class="cl">    IOPRIO_CLASS_IDLE,
-</span></span><span class="line"><span class="cl"><span class="o">}</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">enum <span class="o">{</span>
-</span></span><span class="line"><span class="cl">    <span class="nv">IOPRIO_WHO_PROCESS</span> <span class="o">=</span> 1,
-</span></span><span class="line"><span class="cl">    IOPRIO_WHO_PGRP,
-</span></span><span class="line"><span class="cl">    IOPRIO_WHO_USER,
-</span></span><span class="line"><span class="cl"><span class="o">}</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">calcSquares</span><span class="p">(</span><span class="nx">number</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">squareop</span> <span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">sum</span> <span class="o">:=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">number</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">digit</span> <span class="o">:=</span> <span class="nx">number</span> <span class="o">%</span> <span class="mi">10</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">sum</span> <span class="o">+=</span> <span class="nx">digit</span> <span class="o">*</span> <span class="nx">digit</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">number</span> <span class="o">/=</span> <span class="mi">10</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">squareop</span> <span class="o">&lt;-</span> <span class="nx">sum</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">static int <span class="nv">IOPRIO_CLASS_SHIFT</span> <span class="o">=</span> 13<span class="p">;</span>
-</span></span><span class="line"><span class="cl">static int <span class="nv">EX_EXEC_FAILED</span> <span class="o">=</span> 126<span class="p">;</span> // Program located, but not usable
-</span></span><span class="line"><span class="cl">static int <span class="nv">EX_EXEC_ENOENT</span> <span class="o">=</span> 127<span class="p">;</span> // Could not find program to <span class="nb">exec</span>
-</span></span><span class="line"><span class="cl">static const char* to_prio<span class="o">[]</span> <span class="o">=</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">    <span class="o">[</span>IOPRIO_CLASS_NONE<span class="o">]</span> <span class="o">=</span> <span class="s2">&#34;none&#34;</span>,
-</span></span><span class="line"><span class="cl">    <span class="o">[</span>IOPRIO_CLASS_RT<span class="o">]</span> <span class="o">=</span> <span class="s2">&#34;realtime&#34;</span>,
-</span></span><span class="line"><span class="cl">    <span class="o">[</span>IOPRIO_CLASS_BE<span class="o">]</span> <span class="o">=</span> <span class="s2">&#34;best-effort&#34;</span>,
-</span></span><span class="line"><span class="cl">    <span class="o">[</span>IOPRIO_CLASS_IDLE<span class="o">]</span> <span class="o">=</span> <span class="s2">&#34;idle&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="o">}</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">calcCubes</span><span class="p">(</span><span class="nx">number</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">cubeop</span> <span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">sum</span> <span class="o">:=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">number</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">digit</span> <span class="o">:=</span> <span class="nx">number</span> <span class="o">%</span> <span class="mi">10</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">sum</span> <span class="o">+=</span> <span class="nx">digit</span> <span class="o">*</span> <span class="nx">digit</span> <span class="o">*</span> <span class="nx">digit</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">number</span> <span class="o">/=</span> <span class="mi">10</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">cubeop</span> <span class="o">&lt;-</span> <span class="nx">sum</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">static inline int flush_standard_stream<span class="o">(</span>FILE* stream<span class="o">)</span>
-</span></span><span class="line"><span class="cl"><span class="o">{</span>
-</span></span><span class="line"><span class="cl">    <span class="nv">errno</span> <span class="o">=</span> 0<span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span>ferror<span class="o">(</span>stream<span class="o">)</span> !<span class="o">=</span> <span class="m">0</span> <span class="o">||</span> fflush<span class="o">(</span>stream<span class="o">)</span> !<span class="o">=</span> 0<span class="o">)</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="o">(</span><span class="nv">errno</span> <span class="o">==</span> EBADF<span class="o">)</span> ? <span class="m">0</span> : EOF<span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="o">}</span>
-</span></span><span class="line"><span class="cl">    /*
-</span></span><span class="line"><span class="cl">     * Calling fflush is not sufficient on some filesystems like e.g. NFS,
-</span></span><span class="line"><span class="cl">     * which may defer the actual flush <span class="k">until</span> close. Calling fsync would <span class="nb">help</span>
-</span></span><span class="line"><span class="cl">     * solve this, but would probably result in a performance hit. Thus, we
-</span></span><span class="line"><span class="cl">     * work around this issue by calling close on a dup<span class="s1">&#39;d file descriptor from
-</span></span></span><span class="line"><span class="cl"><span class="s1">     * the stream.
-</span></span></span><span class="line"><span class="cl"><span class="s1">     */
-</span></span></span><span class="line"><span class="cl"><span class="s1">    int fd = fileno(stream);
-</span></span></span><span class="line"><span class="cl"><span class="s1">    if (fd &lt; 0 || (fd = dup(fd)) &lt; 0 || close(fd) != 0) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">        return (errno == EBADF) ? 0 : EOF;
-</span></span></span><span class="line"><span class="cl"><span class="s1">    }
-</span></span></span><span class="line"><span class="cl"><span class="s1">    return 0;
-</span></span></span><span class="line"><span class="cl"><span class="s1">}
-</span></span></span><span class="line"><span class="cl"><span class="s1">
-</span></span></span><span class="line"><span class="cl"><span class="s1">/* Meant to be used atexit(close_stdout); */
-</span></span></span><span class="line"><span class="cl"><span class="s1">static inline void close_stdout(void)
-</span></span></span><span class="line"><span class="cl"><span class="s1">{
-</span></span></span><span class="line"><span class="cl"><span class="s1">    if (flush_standard_stream(stdout) != 0 &amp;&amp; !(errno == EPIPE)) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">        if (errno) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">            warn(&#34;write error&#34;);
-</span></span></span><span class="line"><span class="cl"><span class="s1">        } else {
-</span></span></span><span class="line"><span class="cl"><span class="s1">            warnx(&#34;write error&#34;);
-</span></span></span><span class="line"><span class="cl"><span class="s1">        }
-</span></span></span><span class="line"><span class="cl"><span class="s1">    } else if (flush_standard_stream(stderr) == 0) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">        return;
-</span></span></span><span class="line"><span class="cl"><span class="s1">    }
-</span></span></span><span class="line"><span class="cl"><span class="s1">    _exit(EXIT_FAILURE);
-</span></span></span><span class="line"><span class="cl"><span class="s1">}
-</span></span></span><span class="line"><span class="cl"><span class="s1">
-</span></span></span><span class="line"><span class="cl"><span class="s1">static inline int64_t strtos64_or_err(const char* str, const char* errmesg)
-</span></span></span><span class="line"><span class="cl"><span class="s1">{
-</span></span></span><span class="line"><span class="cl"><span class="s1">    char* end = NULL;
-</span></span></span><span class="line"><span class="cl"><span class="s1">    int64_t num;
-</span></span></span><span class="line"><span class="cl"><span class="s1">    errno = 0;
-</span></span></span><span class="line"><span class="cl"><span class="s1">    if (str == NULL || *str == &#39;</span><span class="se">\0</span><span class="s1">&#39;) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">        if (errno == ERANGE) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">            err(EXIT_FAILURE, &#34;%s: &#39;</span>%s<span class="s1">&#39;&#34;, errmesg, str);
-</span></span></span><span class="line"><span class="cl"><span class="s1">        }
-</span></span></span><span class="line"><span class="cl"><span class="s1">        errx(EXIT_FAILURE, &#34;%s: &#39;</span>%s<span class="s1">&#39;&#34;, errmesg, str);
-</span></span></span><span class="line"><span class="cl"><span class="s1">    }
-</span></span></span><span class="line"><span class="cl"><span class="s1">    num = strtoimax(str, &amp;end, 10);
-</span></span></span><span class="line"><span class="cl"><span class="s1">    if (errno || str == end || (end &amp;&amp; *end)) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">        if (errno == ERANGE) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">            err(EXIT_FAILURE, &#34;%s: &#39;</span>%s<span class="s1">&#39;&#34;, errmesg, str);
-</span></span></span><span class="line"><span class="cl"><span class="s1">        }
-</span></span></span><span class="line"><span class="cl"><span class="s1">        errx(EXIT_FAILURE, &#34;%s: &#39;</span>%s<span class="s1">&#39;&#34;, errmesg, str);
-</span></span></span><span class="line"><span class="cl"><span class="s1">    }
-</span></span></span><span class="line"><span class="cl"><span class="s1">    return num;
-</span></span></span><span class="line"><span class="cl"><span class="s1">}
-</span></span></span><span class="line"><span class="cl"><span class="s1">
-</span></span></span><span class="line"><span class="cl"><span class="s1">static inline int32_t strtos32_or_err(const char* str, const char* errmesg)
-</span></span></span><span class="line"><span class="cl"><span class="s1">{
-</span></span></span><span class="line"><span class="cl"><span class="s1">    int64_t num = strtos64_or_err(str, errmesg);
-</span></span></span><span class="line"><span class="cl"><span class="s1">    if (num &lt; INT32_MIN || num &gt; INT32_MAX) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">        errno = ERANGE;
-</span></span></span><span class="line"><span class="cl"><span class="s1">        err(EXIT_FAILURE, &#34;%s: &#39;</span>%s<span class="s1">&#39;&#34;, errmesg, str);
-</span></span></span><span class="line"><span class="cl"><span class="s1">    }
-</span></span></span><span class="line"><span class="cl"><span class="s1">    return (int32_t)num;
-</span></span></span><span class="line"><span class="cl"><span class="s1">}
-</span></span></span><span class="line"><span class="cl"><span class="s1">
-</span></span></span><span class="line"><span class="cl"><span class="s1">static inline unsigned long IOPRIO_PRIO_MASK()
-</span></span></span><span class="line"><span class="cl"><span class="s1">{
-</span></span></span><span class="line"><span class="cl"><span class="s1">    return (1UL &lt;&lt; IOPRIO_CLASS_SHIFT) - 1;
-</span></span></span><span class="line"><span class="cl"><span class="s1">}
-</span></span></span><span class="line"><span class="cl"><span class="s1">
-</span></span></span><span class="line"><span class="cl"><span class="s1">static inline unsigned long IOPRIO_PRIO_CLASS(unsigned long mask)
-</span></span></span><span class="line"><span class="cl"><span class="s1">{
-</span></span></span><span class="line"><span class="cl"><span class="s1">    return mask &gt;&gt; IOPRIO_CLASS_SHIFT;
-</span></span></span><span class="line"><span class="cl"><span class="s1">}
-</span></span></span><span class="line"><span class="cl"><span class="s1">
-</span></span></span><span class="line"><span class="cl"><span class="s1">static inline unsigned long IOPRIO_PRIO_DATA(unsigned long mask)
-</span></span></span><span class="line"><span class="cl"><span class="s1">{
-</span></span></span><span class="line"><span class="cl"><span class="s1">    return mask &amp; IOPRIO_PRIO_MASK();
-</span></span></span><span class="line"><span class="cl"><span class="s1">}
-</span></span></span><span class="line"><span class="cl"><span class="s1">
-</span></span></span><span class="line"><span class="cl"><span class="s1">static inline unsigned long IOPRIO_PRIO_VALUE(unsigned long class, unsigned long data)
-</span></span></span><span class="line"><span class="cl"><span class="s1">{
-</span></span></span><span class="line"><span class="cl"><span class="s1">    return ((class &lt;&lt; IOPRIO_CLASS_SHIFT) | data);
-</span></span></span><span class="line"><span class="cl"><span class="s1">}
-</span></span></span><span class="line"><span class="cl"><span class="s1">
-</span></span></span><span class="line"><span class="cl"><span class="s1">static int parse_ioclass(const char* str)
-</span></span></span><span class="line"><span class="cl"><span class="s1">{
-</span></span></span><span class="line"><span class="cl"><span class="s1">    for (int i = 0; i &lt; 4; i++) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">        if (!strcasecmp(str, to_prio[i])) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">            return i;
-</span></span></span><span class="line"><span class="cl"><span class="s1">        }
-</span></span></span><span class="line"><span class="cl"><span class="s1">    }
-</span></span></span><span class="line"><span class="cl"><span class="s1">    return -1;
-</span></span></span><span class="line"><span class="cl"><span class="s1">}
-</span></span></span><span class="line"><span class="cl"><span class="s1">
-</span></span></span><span class="line"><span class="cl"><span class="s1">static void ioprio_print(const int pid, const int who)
-</span></span></span><span class="line"><span class="cl"><span class="s1">{
-</span></span></span><span class="line"><span class="cl"><span class="s1">    const int ioprio = syscall(SYS_ioprio_get, who, pid);
-</span></span></span><span class="line"><span class="cl"><span class="s1">    if (ioprio == -1) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">        err(EXIT_FAILURE, &#34;ioprio_get failed&#34;);
-</span></span></span><span class="line"><span class="cl"><span class="s1">    }
-</span></span></span><span class="line"><span class="cl"><span class="s1">    const int ioclass = IOPRIO_PRIO_CLASS(ioprio);
-</span></span></span><span class="line"><span class="cl"><span class="s1">    const char* name = &#34;unknown&#34;;
-</span></span></span><span class="line"><span class="cl"><span class="s1">    if (ioclass &gt;= 0 &amp;&amp; (size_t)ioclass &lt; 4) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">        name = to_prio[ioclass];
-</span></span></span><span class="line"><span class="cl"><span class="s1">    }
-</span></span></span><span class="line"><span class="cl"><span class="s1">    if (ioclass != IOPRIO_CLASS_IDLE) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">        printf(&#34;%s: prio %lu\n&#34;, name, IOPRIO_PRIO_DATA(ioprio));
-</span></span></span><span class="line"><span class="cl"><span class="s1">    } else {
-</span></span></span><span class="line"><span class="cl"><span class="s1">        printf(&#34;%s\n&#34;, name);
-</span></span></span><span class="line"><span class="cl"><span class="s1">    }
-</span></span></span><span class="line"><span class="cl"><span class="s1">}
-</span></span></span><span class="line"><span class="cl"><span class="s1">
-</span></span></span><span class="line"><span class="cl"><span class="s1">static void ioprio_setid(int which, int ioclass, int data, int who, bool tolerant)
-</span></span></span><span class="line"><span class="cl"><span class="s1">{
-</span></span></span><span class="line"><span class="cl"><span class="s1">    const int rc = syscall(SYS_ioprio_set, who, which, IOPRIO_PRIO_VALUE(ioclass, data));
-</span></span></span><span class="line"><span class="cl"><span class="s1">    if (rc == -1 &amp;&amp; !tolerant) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">        err(EXIT_FAILURE, &#34;ioprio_set failed&#34;);
-</span></span></span><span class="line"><span class="cl"><span class="s1">    }
-</span></span></span><span class="line"><span class="cl"><span class="s1">}
-</span></span></span><span class="line"><span class="cl"><span class="s1">
-</span></span></span><span class="line"><span class="cl"><span class="s1">static void __attribute__((__noreturn__)) usage(void)
-</span></span></span><span class="line"><span class="cl"><span class="s1">{
-</span></span></span><span class="line"><span class="cl"><span class="s1">    fputs(&#34;\nUsage:\n&#34;
-</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34; tinyionice [options] -p &lt;pid&gt;...\n tinyionice [options] -P &lt;pgid&gt;...\n&#34;
-</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34; tinyionice [options] -u &lt;uid&gt;...\n tinyionice [options] &lt;command&gt;\n\n&#34;
-</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34;Show or change the I/O-scheduling class and priority of a process.\n\n&#34;
-</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34;Options:\n&#34;
-</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34; -c, --class &lt;class&gt;    name or number of scheduling class,\n&#34;
-</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34;                          0: none, 1: realtime, 2: best-effort, 3: idle\n&#34;
-</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34; -n, --classdata &lt;num&gt;  priority (0..7) in the specified scheduling class,\n&#34;
-</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34;                          only for the realtime and best-effort classes\n&#34;
-</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34; -p, --pid &lt;pid&gt;...     act on these already running processes\n&#34;
-</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34; -P, --pgid &lt;pgrp&gt;...   act on already running processes in these groups\n&#34;
-</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34; -t, --ignore           ignore failures\n&#34;
-</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34; -u, --uid &lt;uid&gt;...     act on already running processes owned by these users\n\n&#34;
-</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34; -h, --help             display this help\n&#34;
-</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34; -V, --version          display version\n&#34;, stdout);
-</span></span></span><span class="line"><span class="cl"><span class="s1">    exit(EXIT_SUCCESS);
-</span></span></span><span class="line"><span class="cl"><span class="s1">}
-</span></span></span><span class="line"><span class="cl"><span class="s1">
-</span></span></span><span class="line"><span class="cl"><span class="s1">int main(int argc, char** argv)
-</span></span></span><span class="line"><span class="cl"><span class="s1">{
-</span></span></span><span class="line"><span class="cl"><span class="s1">    bool tolerant = false;
-</span></span></span><span class="line"><span class="cl"><span class="s1">    const char* invalid_msg = NULL;
-</span></span></span><span class="line"><span class="cl"><span class="s1">    int data = 4, set = 0, c = 0, which = 0, who = 0, ioclass = IOPRIO_CLASS_BE;
-</span></span></span><span class="line"><span class="cl"><span class="s1">    static const struct option longopts[] = {
-</span></span></span><span class="line"><span class="cl"><span class="s1">        { &#34;classdata&#34;, required_argument, NULL, &#39;</span>n<span class="s1">&#39; },
-</span></span></span><span class="line"><span class="cl"><span class="s1">        { &#34;class&#34;, required_argument, NULL, &#39;</span>c<span class="s1">&#39; },
-</span></span></span><span class="line"><span class="cl"><span class="s1">        { &#34;help&#34;, no_argument, NULL, &#39;</span>h<span class="s1">&#39; },
-</span></span></span><span class="line"><span class="cl"><span class="s1">        { &#34;ignore&#34;, no_argument, NULL, &#39;</span>t<span class="s1">&#39; },
-</span></span></span><span class="line"><span class="cl"><span class="s1">        { &#34;pid&#34;, required_argument, NULL, &#39;</span>p<span class="s1">&#39; },
-</span></span></span><span class="line"><span class="cl"><span class="s1">        { &#34;pgid&#34;, required_argument, NULL, &#39;</span>P<span class="s1">&#39; },
-</span></span></span><span class="line"><span class="cl"><span class="s1">        { &#34;uid&#34;, required_argument, NULL, &#39;</span>u<span class="s1">&#39; },
-</span></span></span><span class="line"><span class="cl"><span class="s1">        { &#34;version&#34;, no_argument, NULL, &#39;</span>V<span class="s1">&#39; },
-</span></span></span><span class="line"><span class="cl"><span class="s1">        { NULL, 0, NULL, 0 }
-</span></span></span><span class="line"><span class="cl"><span class="s1">    };
-</span></span></span><span class="line"><span class="cl"><span class="s1">    atexit(close_stdout);
-</span></span></span><span class="line"><span class="cl"><span class="s1">    while ((c = getopt_long(argc, argv, &#34;+n:c:p:P:u:tVh&#34;, longopts, NULL)) != EOF)
-</span></span></span><span class="line"><span class="cl"><span class="s1">        switch (c) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">        case &#39;</span>n<span class="s1">&#39;:
-</span></span></span><span class="line"><span class="cl"><span class="s1">            data = strtos32_or_err(optarg, &#34;invalid class data argument&#34;);
-</span></span></span><span class="line"><span class="cl"><span class="s1">            set |= 1;
-</span></span></span><span class="line"><span class="cl"><span class="s1">            break;
-</span></span></span><span class="line"><span class="cl"><span class="s1">        case &#39;</span>c<span class="s1">&#39;:
-</span></span></span><span class="line"><span class="cl"><span class="s1">            if (isdigit(*optarg)) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">                ioclass = strtos32_or_err(optarg, &#34;invalid class argument&#34;);
-</span></span></span><span class="line"><span class="cl"><span class="s1">            } else {
-</span></span></span><span class="line"><span class="cl"><span class="s1">                ioclass = parse_ioclass(optarg);
-</span></span></span><span class="line"><span class="cl"><span class="s1">                if (ioclass &lt; 0) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">                    errx(EXIT_FAILURE, &#34;unknown scheduling class: &#39;</span>%s<span class="s1">&#39;&#34;, optarg);
-</span></span></span><span class="line"><span class="cl"><span class="s1">                }
-</span></span></span><span class="line"><span class="cl"><span class="s1">            }
-</span></span></span><span class="line"><span class="cl"><span class="s1">            set |= 2;
-</span></span></span><span class="line"><span class="cl"><span class="s1">            break;
-</span></span></span><span class="line"><span class="cl"><span class="s1">        case &#39;</span>p<span class="s1">&#39;:
-</span></span></span><span class="line"><span class="cl"><span class="s1">            if (who) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">                errx(EXIT_FAILURE, &#34;can handle only one of pid, pgid or uid at once&#34;);
-</span></span></span><span class="line"><span class="cl"><span class="s1">            }
-</span></span></span><span class="line"><span class="cl"><span class="s1">            invalid_msg = &#34;invalid PID argument&#34;;
-</span></span></span><span class="line"><span class="cl"><span class="s1">            which = strtos32_or_err(optarg, invalid_msg);
-</span></span></span><span class="line"><span class="cl"><span class="s1">            who = IOPRIO_WHO_PROCESS;
-</span></span></span><span class="line"><span class="cl"><span class="s1">            break;
-</span></span></span><span class="line"><span class="cl"><span class="s1">        case &#39;</span>P<span class="s1">&#39;:
-</span></span></span><span class="line"><span class="cl"><span class="s1">            if (who) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">                errx(EXIT_FAILURE, &#34;can handle only one of pid, pgid or uid at once&#34;);
-</span></span></span><span class="line"><span class="cl"><span class="s1">            }
-</span></span></span><span class="line"><span class="cl"><span class="s1">            invalid_msg = &#34;invalid PGID argument&#34;;
-</span></span></span><span class="line"><span class="cl"><span class="s1">            which = strtos32_or_err(optarg, invalid_msg);
-</span></span></span><span class="line"><span class="cl"><span class="s1">            who = IOPRIO_WHO_PGRP;
-</span></span></span><span class="line"><span class="cl"><span class="s1">            break;
-</span></span></span><span class="line"><span class="cl"><span class="s1">        case &#39;</span>u<span class="s1">&#39;:
-</span></span></span><span class="line"><span class="cl"><span class="s1">            if (who) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">                errx(EXIT_FAILURE, &#34;can handle only one of pid, pgid or uid at once&#34;);
-</span></span></span><span class="line"><span class="cl"><span class="s1">            }
-</span></span></span><span class="line"><span class="cl"><span class="s1">            invalid_msg = &#34;invalid UID argument&#34;;
-</span></span></span><span class="line"><span class="cl"><span class="s1">            which = strtos32_or_err(optarg, invalid_msg);
-</span></span></span><span class="line"><span class="cl"><span class="s1">            who = IOPRIO_WHO_USER;
-</span></span></span><span class="line"><span class="cl"><span class="s1">            break;
-</span></span></span><span class="line"><span class="cl"><span class="s1">        case &#39;</span>t<span class="s1">&#39;:
-</span></span></span><span class="line"><span class="cl"><span class="s1">            tolerant = 1;
-</span></span></span><span class="line"><span class="cl"><span class="s1">            break;
-</span></span></span><span class="line"><span class="cl"><span class="s1">        case &#39;</span>V<span class="s1">&#39;:
-</span></span></span><span class="line"><span class="cl"><span class="s1">            printf(&#34;%s\n&#34;, version_string);
-</span></span></span><span class="line"><span class="cl"><span class="s1">            exit(EXIT_SUCCESS);
-</span></span></span><span class="line"><span class="cl"><span class="s1">        case &#39;</span>h<span class="s1">&#39;:
-</span></span></span><span class="line"><span class="cl"><span class="s1">            usage();
-</span></span></span><span class="line"><span class="cl"><span class="s1">        default:
-</span></span></span><span class="line"><span class="cl"><span class="s1">            fprintf(stderr, &#34;Try &#39;</span>tinyionice --help<span class="s1">&#39; for more information.\n&#34;);
-</span></span></span><span class="line"><span class="cl"><span class="s1">            exit(EXIT_FAILURE);
-</span></span></span><span class="line"><span class="cl"><span class="s1">        }
-</span></span></span><span class="line"><span class="cl"><span class="s1">
-</span></span></span><span class="line"><span class="cl"><span class="s1">    switch (ioclass) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">    case IOPRIO_CLASS_NONE:
-</span></span></span><span class="line"><span class="cl"><span class="s1">        if ((set &amp; 1) &amp;&amp; !tolerant) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">            warnx(&#34;ignoring given class data for none class&#34;);
-</span></span></span><span class="line"><span class="cl"><span class="s1">        }
-</span></span></span><span class="line"><span class="cl"><span class="s1">        data = 0;
-</span></span></span><span class="line"><span class="cl"><span class="s1">        break;
-</span></span></span><span class="line"><span class="cl"><span class="s1">    case IOPRIO_CLASS_RT:
-</span></span></span><span class="line"><span class="cl"><span class="s1">    case IOPRIO_CLASS_BE:
-</span></span></span><span class="line"><span class="cl"><span class="s1">        break;
-</span></span></span><span class="line"><span class="cl"><span class="s1">    case IOPRIO_CLASS_IDLE:
-</span></span></span><span class="line"><span class="cl"><span class="s1">        if ((set &amp; 1) &amp;&amp; !tolerant) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">            warnx(&#34;ignoring given class data for idle class&#34;);
-</span></span></span><span class="line"><span class="cl"><span class="s1">        }
-</span></span></span><span class="line"><span class="cl"><span class="s1">        data = 7;
-</span></span></span><span class="line"><span class="cl"><span class="s1">        break;
-</span></span></span><span class="line"><span class="cl"><span class="s1">    default:
-</span></span></span><span class="line"><span class="cl"><span class="s1">        if (!tolerant) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">            warnx(&#34;unknown prio class %d&#34;, ioclass);
-</span></span></span><span class="line"><span class="cl"><span class="s1">        }
-</span></span></span><span class="line"><span class="cl"><span class="s1">        break;
-</span></span></span><span class="line"><span class="cl"><span class="s1">    }
-</span></span></span><span class="line"><span class="cl"><span class="s1">    if (!set &amp;&amp; !which &amp;&amp; optind == argc) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">        // tinyionice without options, print the current ioprio
-</span></span></span><span class="line"><span class="cl"><span class="s1">        ioprio_print(0, IOPRIO_WHO_PROCESS);
-</span></span></span><span class="line"><span class="cl"><span class="s1">    } else if (!set &amp;&amp; who) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">        // tinyionice -p|-P|-u ID [ID ...]
-</span></span></span><span class="line"><span class="cl"><span class="s1">        ioprio_print(which, who);
-</span></span></span><span class="line"><span class="cl"><span class="s1">        for (; argv[optind]; ++optind) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">            which = strtos32_or_err(argv[optind], invalid_msg);
-</span></span></span><span class="line"><span class="cl"><span class="s1">            ioprio_print(which, who);
-</span></span></span><span class="line"><span class="cl"><span class="s1">        }
-</span></span></span><span class="line"><span class="cl"><span class="s1">    } else if (set &amp;&amp; who) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">        // tinyionice -c CLASS -p|-P|-u ID [ID ...]
-</span></span></span><span class="line"><span class="cl"><span class="s1">        ioprio_setid(which, ioclass, data, who, tolerant);
-</span></span></span><span class="line"><span class="cl"><span class="s1">        for (; argv[optind]; ++optind) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">            which = strtos32_or_err(argv[optind], invalid_msg);
-</span></span></span><span class="line"><span class="cl"><span class="s1">            ioprio_setid(which, ioclass, data, who, tolerant);
-</span></span></span><span class="line"><span class="cl"><span class="s1">        }
-</span></span></span><span class="line"><span class="cl"><span class="s1">    } else if (argv[optind]) {
-</span></span></span><span class="line"><span class="cl"><span class="s1">        // tinyionce [-c CLASS] COMMAND
-</span></span></span><span class="line"><span class="cl"><span class="s1">        ioprio_setid(0, ioclass, data, IOPRIO_WHO_PROCESS, tolerant);
-</span></span></span><span class="line"><span class="cl"><span class="s1">        execvp(argv[optind], &amp;argv[optind]);
-</span></span></span><span class="line"><span class="cl"><span class="s1">        err(errno == ENOENT ? EX_EXEC_ENOENT : EX_EXEC_FAILED, &#34;failed to execute %s&#34;, argv[optind]);
-</span></span></span><span class="line"><span class="cl"><span class="s1">    } else {
-</span></span></span><span class="line"><span class="cl"><span class="s1">        warnx(&#34;bad usage&#34;);
-</span></span></span><span class="line"><span class="cl"><span class="s1">        fprintf(stderr, &#34;Try &#39;</span>tinyionice --help<span class="err">&#39;</span> <span class="k">for</span> more information.<span class="se">\n</span><span class="s2">&#34;);
-</span></span></span><span class="line"><span class="cl"><span class="s2">        exit(EXIT_FAILURE);
-</span></span></span><span class="line"><span class="cl"><span class="s2">    }
-</span></span></span><span class="line"><span class="cl"><span class="s2">    return EXIT_SUCCESS;
-</span></span></span><span class="line"><span class="cl"><span class="s2">}</span></span></span></code></pre></code><button onClick="location.href='witchhazel.html'">Prev</button><button onClick="location.href='xcode.html'">Next</button><button onClick="location.href='all.html'">All</button><button onClick="location.href='index.html'">Overview</button></body></html>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">number</span> <span class="o">:=</span> <span class="mi">589</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">sqrch</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">cubech</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">go</span> <span class="nf">calcSquares</span><span class="p">(</span><span class="nx">number</span><span class="p">,</span> <span class="nx">sqrch</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">go</span> <span class="nf">calcCubes</span><span class="p">(</span><span class="nx">number</span><span class="p">,</span> <span class="nx">cubech</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">squares</span><span class="p">,</span> <span class="nx">cubes</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">sqrch</span><span class="p">,</span> <span class="o">&lt;-</span><span class="nx">cubech</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Final output&#34;</span><span class="p">,</span> <span class="nx">squares</span><span class="o">+</span><span class="nx">cubes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></code><button onClick="location.href='witchhazel.html'">Prev</button><button onClick="location.href='xcode.html'">Next</button><button onClick="location.href='all.html'">All</button><button onClick="location.href='index.html'">Overview</button></body></html>
