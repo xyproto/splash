@@ -7,4 +7,4 @@ import (
 //go:embed example/main.go
 var exampleSourceCode string
 
-var longerSampleContent = "<code><pre>\n" + exampleSourceCode + "\n</pre></code>"
+var longerSampleContent = "<code><pre>" + exampleSourceCode + "</pre></code>"
