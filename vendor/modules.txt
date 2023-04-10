@@ -1,4 +1,4 @@
-# github.com/alecthomas/chroma/v2 v2.7.1-0.20230404013424-029798b351ba
+# github.com/alecthomas/chroma/v2 v2.7.1-0.20230409061740-3c219428245c
 ## explicit
 github.com/alecthomas/chroma/v2
 github.com/alecthomas/chroma/v2/formatters/html
