@@ -4,7 +4,7 @@ github.com/alecthomas/chroma/v2
 github.com/alecthomas/chroma/v2/formatters/html
 github.com/alecthomas/chroma/v2/lexers
 github.com/alecthomas/chroma/v2/styles
-# github.com/dlclark/regexp2 v1.8.0
+# github.com/dlclark/regexp2 v1.9.0
 ## explicit
 github.com/dlclark/regexp2
 github.com/dlclark/regexp2/syntax

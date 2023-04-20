@@ -22,14 +22,17 @@ type fasttime int64
 // extra time). This ensures that if regexp2 with timeouts
 // stops being used we will stop background work.
 type fastclock struct {
-	// current and clockEnd can be read via atomic loads.
-	// Reads and writes of other fields require mu to be held.
-	mu sync.Mutex
+	// instances of atomicTime must be at the start of the struct (or at least 64-bit aligned)
+	// otherwise 32-bit architectures will panic
 
-	start    time.Time  // Time corresponding to fasttime(0)
 	current  atomicTime // Current time (approximate)
 	clockEnd atomicTime // When clock updater is supposed to stop (>= any existing deadline)
-	running  bool       // Is a clock updater running?
+
+	// current and clockEnd can be read via atomic loads.
+	// Reads and writes of other fields require mu to be held.
+	mu      sync.Mutex
+	start   time.Time // Time corresponding to fasttime(0)
+	running bool      // Is a clock updater running?
 }
 
 var fast fastclock
@@ -73,14 +76,36 @@ func extendClock(end fasttime) {
 	}
 }
 
+// stop the timeout clock in the background
+// should only used for unit tests to abandon the background goroutine
+func stopClock() {
+	fast.mu.Lock()
+	if fast.running {
+		fast.clockEnd.write(fasttime(0))
+	}
+	fast.mu.Unlock()
+
+	// pause until not running
+	// get and release the lock
+	isRunning := true
+	for isRunning {
+		time.Sleep(clockPeriod / 2)
+		fast.mu.Lock()
+		isRunning = fast.running
+		fast.mu.Unlock()
+	}
+}
+
 func durationToTicks(d time.Duration) fasttime {
 	// Downscale nanoseconds to approximately a millisecond so that we can avoid
 	// overflow even if the caller passes in math.MaxInt64.
 	return fasttime(d) >> 20
 }
 
+const DefaultClockPeriod = 100 * time.Millisecond
+
 // clockPeriod is the approximate interval between updates of approximateClock.
-const clockPeriod = 100 * time.Millisecond
+var clockPeriod = DefaultClockPeriod
 
 func runClock() {
 	fast.mu.Lock()
