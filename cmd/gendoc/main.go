@@ -18,6 +18,7 @@ package main
 import "fmt"
 
 func main() {
+	// hi
 	fmt.Println("Hello, World!")
 }
 </pre></code>`
