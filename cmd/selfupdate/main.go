@@ -31,22 +31,48 @@ func fetchPage() (string, error) {
 	return string(body), nil
 }
 
+func hasS(xs []string, x string) bool {
+	for _, element := range xs {
+		if element == x {
+			return true
+		}
+	}
+	return false
+}
+
 func extractStyleNames(htmlContent string) []string {
 	// Use a regular expression to find all the links to XML files
 	re := regexp.MustCompile(`styles/.*\.xml`)
 	matches := re.FindAllString(htmlContent, -1)
 
 	// Extract the style names from the matches
-	styleNames := make([]string, len(matches))
-	for i, match := range matches {
-		// Find the last '/' and the last '.'
-		lastSlashIdx := strings.LastIndex(match, "/")
-		lastDotIdx := strings.LastIndex(match, ".")
-		// Extract the style name from the match
-		styleName := match[lastSlashIdx+1 : lastDotIdx]
-		// Remove everything after the last period
-		styleName = strings.TrimSuffix(styleName, styleName[strings.LastIndex(styleName, "."):])
-		styleNames[i] = styleName
+	var styleNames []string
+	if len(matches) == 1 {
+		matches = strings.Split(matches[0], "\",\"")
+	}
+	for _, match := range matches {
+		if strings.Contains(match, "\"") {
+			fields := strings.Split(match, "\"")
+			if len(fields) > 0 {
+				match = fields[len(fields)-1]
+			}
+		}
+		if strings.Contains(match, "/") {
+			fields := strings.Split(match, "/")
+			if len(fields) > 0 {
+				match = fields[len(fields)-1]
+			}
+		}
+		if strings.Contains(match, ".") {
+			fields := strings.Split(match, ".")
+			if len(fields) > 0 {
+				match = fields[0]
+			}
+		}
+		styleName := match
+		if !hasS(styleNames, styleName) {
+			styleNames = append(styleNames, styleName)
+		}
 	}
 
 	return styleNames
