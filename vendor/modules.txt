@@ -1,10 +1,10 @@
-# github.com/alecthomas/chroma/v2 v2.12.1-0.20240220090827-381050ba0001
+# github.com/alecthomas/chroma/v2 v2.12.1-0.20240226003644-0f92de4f03a7
 ## explicit
 github.com/alecthomas/chroma/v2
 github.com/alecthomas/chroma/v2/formatters/html
 github.com/alecthomas/chroma/v2/lexers
 github.com/alecthomas/chroma/v2/styles
-# github.com/dlclark/regexp2 v1.10.0
+# github.com/dlclark/regexp2 v1.11.0
 github.com/dlclark/regexp2
 github.com/dlclark/regexp2/syntax
 # github.com/russross/blackfriday v1.5.3-0.20190616195246-a925a152c144
