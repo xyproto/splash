@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -98,6 +99,8 @@ func main() {
 	styleNames := extractStyleNames(pageHTML)
 
 	sourceCode := generateGoSourceCode(styleNames)
+
+	fmt.Println(sourceCode)
 
 	err = ioutil.WriteFile(stylesSourceFile, []byte(sourceCode), 0644)
 	if err != nil {
