@@ -1,7 +1,5 @@
 package main
 
-// Inspired by ChatGPT
-
 import (
 	"bytes"
 	"io/ioutil"
@@ -17,13 +15,12 @@ const (
 )
 
 func fetchPage() (string, error) {
-	// Fetch the webpage
 	resp, err := http.Get(styleListWebPage)
 	if err != nil {
 		return "", err
 	}
 	defer resp.Body.Close()
-	// Read the body
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
@@ -41,7 +38,6 @@ func hasS(xs []string, x string) bool {
 }
 
 func extractStyleNames(htmlContent string) []string {
-	// Use a regular expression to find all the links to XML files
 	re := regexp.MustCompile(`styles/.*\.xml`)
 	matches := re.FindAllString(htmlContent, -1)
 
@@ -69,6 +65,9 @@ func extractStyleNames(htmlContent string) []string {
 				match = fields[0]
 			}
 		}
+		match = strings.ReplaceAll(match, "<", "")
+		match = strings.ReplaceAll(match, ">", "")
+
 		styleName := match
 		if !hasS(styleNames, styleName) {
 			styleNames = append(styleNames, styleName)
