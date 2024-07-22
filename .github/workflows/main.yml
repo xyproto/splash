@@ -12,11 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version: "1.22"
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Update the Chroma dependency to the latest master commit
         run: |
           go get github.com/alecthomas/chroma@$(git ls-remote --refs --heads https://github.com/alecthomas/chroma master | cut -f1)
