@@ -5,76 +5,33 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"net/http"
-	"regexp"
+	"os/exec"
 	"strings"
 )
 
 const (
 	stylesSourceFile = "cmd/gendoc/styles.go"
-	styleListWebPage = "https://github.com/alecthomas/chroma/tree/master/styles"
 )
 
-func fetchPage() (string, error) {
-	resp, err := http.Get(styleListWebPage)
+func fetchStyles() (string, error) {
+	cmd := exec.Command("sh", "-c", `curl -s https://github.com/alecthomas/chroma/tree/master/styles | grep "application/json" | tr '{' '\n' | grep styles | cut -d'"' -f4 | grep \.xml | cut -d. -f1`)
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-	return string(body), nil
+	return out.String(), nil
 }
 
-func hasS(xs []string, x string) bool {
-	for _, element := range xs {
-		if element == x {
-			return true
-		}
-	}
-	return false
-}
-
-func extractStyleNames(htmlContent string) []string {
-	re := regexp.MustCompile(`styles/.*\.xml`)
-	matches := re.FindAllString(htmlContent, -1)
-
-	// Extract the style names from the matches
+func extractStyleNames(cmdOutput string) []string {
+	styles := strings.Split(cmdOutput, "\n")
 	var styleNames []string
-	if len(matches) == 1 {
-		matches = strings.Split(matches[0], "\",\"")
-	}
-	for _, match := range matches {
-		if strings.Contains(match, "\"") {
-			fields := strings.Split(match, "\"")
-			if len(fields) > 0 {
-				match = fields[len(fields)-1]
-			}
-		}
-		if strings.Contains(match, "/") {
-			fields := strings.Split(match, "/")
-			if len(fields) > 0 {
-				match = fields[len(fields)-1]
-			}
-		}
-		if strings.Contains(match, ".") {
-			fields := strings.Split(match, ".")
-			if len(fields) > 0 {
-				match = fields[0]
-			}
-		}
-		match = strings.ReplaceAll(match, "<", "")
-		match = strings.ReplaceAll(match, ">", "")
-
-		styleName := match
-		if !hasS(styleNames, styleName) {
-			styleNames = append(styleNames, styleName)
+	for _, style := range styles {
+		if style != "" {
+			styleNames = append(styleNames, style)
 		}
 	}
-
 	return styleNames
 }
 
@@ -82,21 +39,19 @@ func generateGoSourceCode(styles []string) string {
 	var buffer bytes.Buffer
 	buffer.WriteString("package main\n\nvar styles = []string{\n")
 	for _, style := range styles {
-		buffer.WriteString("\t\"")
-		buffer.WriteString(style)
-		buffer.WriteString("\",\n")
+		buffer.WriteString(fmt.Sprintf("\t\"%s\",\n", style))
 	}
 	buffer.WriteString("}\n")
 	return buffer.String()
 }
 
 func main() {
-	pageHTML, err := fetchPage()
+	cmdOutput, err := fetchStyles()
 	if err != nil {
-		log.Fatalf("error fetching page: %v", err)
+		log.Fatalf("error fetching styles: %v", err)
 	}
 
-	styleNames := extractStyleNames(pageHTML)
+	styleNames := extractStyleNames(cmdOutput)
 
 	sourceCode := generateGoSourceCode(styleNames)
 
