@@ -1,10 +1,10 @@
-# github.com/alecthomas/chroma/v2 v2.14.1-0.20240802213808-9221c6d919d3
+# github.com/alecthomas/chroma/v2 v2.14.1-0.20240805052749-c6e90314dfab
 ## explicit; go 1.19
 github.com/alecthomas/chroma/v2
 github.com/alecthomas/chroma/v2/formatters/html
 github.com/alecthomas/chroma/v2/lexers
 github.com/alecthomas/chroma/v2/styles
-# github.com/dlclark/regexp2 v1.11.2
+# github.com/dlclark/regexp2 v1.11.4
 ## explicit; go 1.13
 github.com/dlclark/regexp2
 github.com/dlclark/regexp2/syntax
