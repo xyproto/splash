@@ -8,6 +8,8 @@ cmd/selfupdate/selfupdate
 cmd/simple/simple
 docs/docs
 include.txt
-output_*.html
 selfupdate
 simple/simple
+output_test_language.html
+output_test_markdown.html
+output_test_simple.html
