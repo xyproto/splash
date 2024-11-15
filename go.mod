@@ -3,7 +3,7 @@ module github.com/xyproto/splash
 go 1.21
 
 require (
-	github.com/alecthomas/chroma/v2 v2.14.1-0.20241113214823-23ed7b98d293
+	github.com/alecthomas/chroma/v2 v2.14.1-0.20241114084538-539d03125465
 	github.com/russross/blackfriday v1.5.3-0.20190616195246-a925a152c144
 )
 
