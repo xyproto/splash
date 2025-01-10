@@ -1,7 +1,7 @@
 github.com/alecthomas/assert/v2 v2.11.0 h1:2Q9r3ki8+JYXvGsDyBXwH3LcJ+WK5D0gc5E8vS6K3D0=
 github.com/alecthomas/assert/v2 v2.11.0/go.mod h1:Bze95FyfUr7x34QZrjL+XP+0qgp/zg8yS+TtBj1WA3k=
-github.com/alecthomas/chroma/v2 v2.15.1-0.20250107044925-d82957931ff5 h1:+4l3IDVskAPznt1wDiDRiBH4CrH3SfLDynIjMXdJ+bA=
-github.com/alecthomas/chroma/v2 v2.15.1-0.20250107044925-d82957931ff5/go.mod h1:gUhVLrPDXPtp/f+L1jo9xepo9gL4eLwRuGAunSZMkio=
+github.com/alecthomas/chroma/v2 v2.15.1-0.20250109102828-0bd7c6851b5e h1:X0n6tfwfodqZn5OhqDC1f8hvIBYkArpjH14hV4blBJI=
+github.com/alecthomas/chroma/v2 v2.15.1-0.20250109102828-0bd7c6851b5e/go.mod h1:sPV1znqVMjUY9uGHTqLPmaI3v3D4EoLx1JIubjdYAw0=
 github.com/alecthomas/repr v0.4.0 h1:GhI2A8MACjfegCPVq9f1FLvIBS+DrQ2KQBFZP1iFzXc=
 github.com/alecthomas/repr v0.4.0/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
 github.com/dlclark/regexp2 v1.11.4 h1:rPYF9/LECdNymJufQKmri9gV604RvvABwgOA8un7yAo=
