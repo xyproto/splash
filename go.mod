@@ -5,7 +5,7 @@ go 1.22
 toolchain go1.22.10
 
 require (
-	github.com/alecthomas/chroma/v2 v2.20.1-0.20250812204320-bd10a058938d
+	github.com/alecthomas/chroma/v2 v2.20.1-0.20250819104937-2d9c0d18a120
 	github.com/russross/blackfriday v1.5.3-0.20190616195246-a925a152c144
 )
 
