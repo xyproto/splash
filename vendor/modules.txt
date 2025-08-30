@@ -1,4 +1,4 @@
-# github.com/alecthomas/chroma/v2 v2.20.1-0.20250827095101-e9ffd5a79aa0
+# github.com/alecthomas/chroma/v2 v2.20.1-0.20250829231217-685ad2cabcd8
 ## explicit; go 1.22
 github.com/alecthomas/chroma/v2
 github.com/alecthomas/chroma/v2/formatters/html
