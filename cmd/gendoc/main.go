@@ -3,10 +3,10 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"github.com/xyproto/splash"
-	"io/ioutil"
 	"os"
 	"time"
+
+	"github.com/xyproto/splash"
 )
 
 const (
@@ -81,7 +81,7 @@ func generateGallery(sampleContent, dirname string) {
 		}
 
 		// Write the HTML sample for this style name
-		err = ioutil.WriteFile(dirname+"/"+styleName+".html", htmlBytes, 0644)
+		err = os.WriteFile(dirname+"/"+styleName+".html", htmlBytes, 0644)
 		if err != nil {
 			panic(err)
 		}
@@ -108,7 +108,7 @@ func generateGallery(sampleContent, dirname string) {
 		buf.WriteString("<p><a href='../index.html' alt='Gallery with shorter code samples'>Gallery with shorter code samples</a></p>")
 	}
 	buf.WriteString(footer())
-	err := ioutil.WriteFile(dirname+"/"+"index.html", buf.Bytes(), 0644)
+	err := os.WriteFile(dirname+"/"+"index.html", buf.Bytes(), 0644)
 	if err != nil {
 		panic(err)
 	}
@@ -159,7 +159,7 @@ func generateGallery(sampleContent, dirname string) {
 		buf.WriteString("<p><a id='bottom' href='../index.html' alt='Go to the other gallery'>Gallery with shorter code samples</a></p>")
 	}
 	buf.WriteString(footer())
-	err = ioutil.WriteFile(dirname+"/all.html", buf.Bytes(), 0644)
+	err = os.WriteFile(dirname+"/all.html", buf.Bytes(), 0644)
 	if err != nil {
 		panic(err)
 	}
@@ -167,9 +167,13 @@ func generateGallery(sampleContent, dirname string) {
 }
 
 func main() {
-	if err := os.Chdir("../../docs"); err != nil {
-		fmt.Fprintln(os.Stderr, err.Error())
-		os.Exit(1)
+	// Try to change directory to "docs" and if that does not work,
+	// try to change directory to ../../docs
+	if err := os.Chdir("docs"); err != nil {
+		if err := os.Chdir("../../docs"); err != nil {
+			fmt.Fprintln(os.Stderr, "couldn't change directory to either docs/ nor ../../docs/")
+			os.Exit(1)
+		}
 	}
 	generateGallery(sampleContent, ".")
 	// TODO: Create directory first
