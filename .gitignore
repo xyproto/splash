@@ -8,7 +8,6 @@ cmd/selfupdate/selfupdate
 cmd/simple/simple
 docs/docs
 include.txt
-selfupdate
 simple/simple
 output_test_language.html
 output_test_markdown.html
