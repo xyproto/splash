@@ -10,11 +10,12 @@ import (
 )
 
 const (
-	title           = "Chroma Style Gallery"
-	backgroundColor = "#c2b5a7" // art gallery background color
-	lineColor       = "#b00000" // header underline color
-	simpleCSS       = "body { font-family: sans-serif; margin: 4em; background: " + backgroundColor + "; } .chroma { padding: 1em; } #main-headline { border-bottom: 3px solid " + lineColor + "; margin-bottom: 2em; } a { color: #1E385B; } a:visited { color: #1E385B; } a:hover { color: #4682B4; }"
-	sampleContent   = `<code><pre>
+	title                 = "Chroma Style Gallery"
+	backgroundColor       = "#c2b5a7" // art gallery background color
+	lineColor             = "#b00000" // header underline color
+	defaultCodeBackground = "#303030" // default code sample background color
+	simpleCSS             = "body { font-family: sans-serif; margin: 4em; background-color: " + backgroundColor + "; } .chroma { padding: 1em; } #main-headline { border-bottom: 3px solid " + lineColor + "; margin-bottom: 2em; } a { color: #1E385B; } a:visited { color: #1E385B; } a:hover { color: #4682B4; } pre { background-color: " + defaultCodeBackground + "; }"
+	sampleContent         = `<code><pre>
 package main
 
 import "fmt"
@@ -120,7 +121,7 @@ func generateGallery(sampleContent, dirname string) {
 	buf.WriteString("<!doctype html><html><head><title>")
 	buf.WriteString(title)
 	buf.WriteString("</title><style>")
-	css := "body { font-family: sans-serif; margin: 4em; background: " + backgroundColor + "} h1 { border-bottom: 3px solid " + lineColor + "; margin-bottom: 2em; } pre { display: inline-block; margin: 2em; padding: 3em 5em 3em 2em; box-shadow: 5px 5px 5px rgba(68, 68, 68, 0.6); border-radius: 7px; border: 2px solid black;} #stylelink:link { text-decoration: none; color: black; } #stylelink:visited { color: black; } #stylelink:hover { color: #4682B4; } a { color: #1E385B; }"
+	css := "body { font-family: sans-serif; margin: 4em; background-color: " + backgroundColor + "} h1 { border-bottom: 3px solid " + lineColor + "; margin-bottom: 2em; } pre { display: inline-block; margin: 2em; padding: 3em 5em 3em 2em; box-shadow: 5px 5px 5px rgba(68, 68, 68, 0.6); border-radius: 7px; border: 2px solid black;} #stylelink:link { text-decoration: none; color: black; } #stylelink:visited { color: black; } #stylelink:hover { color: #4682B4; } a { color: #1E385B; } pre { background-color: " + defaultCodeBackground + "}"
 	buf.WriteString(css)
 	buf.WriteString("</style></head><body><h1>")
 	buf.WriteString(title)
