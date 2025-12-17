@@ -36,32 +36,32 @@ func footer() string {
 func generateGallery(sampleContent, dirname string) {
 
 	// Generate a HTML page per style
-	for i, styleName := range styles {
+	for i, style := range styles {
 
 		// Generate a HTML document for the current style name
 		var inputBuffer bytes.Buffer
 		inputBuffer.WriteString("<!doctype html><html><head><title>")
-		inputBuffer.WriteString(styleName)
+		inputBuffer.WriteString(style.styleName)
 		inputBuffer.WriteString("</title><style>")
 		inputBuffer.WriteString(simpleCSS + " a { text-decoration: none; }  a:hover { color: #4682B4; }")
 		inputBuffer.WriteString("</style></head><body>")
 		inputBuffer.WriteString("<h1>")
-		inputBuffer.WriteString("<a alt='View " + styleName + " on a page with all the styles' href='all.html#" + styleName + "'>" + styleName + "</a>")
+		inputBuffer.WriteString("<a alt='View " + style.styleName + " on a page with all the styles' href='all.html#" + style.fileName + "'>" + style.styleName + "</a>")
 		inputBuffer.WriteString("</h1>")
 		inputBuffer.WriteString(sampleContent)
 
 		// Button to the previous style, if possible
 		if i > 0 {
-			prevName := styles[i-1]
-			inputBuffer.WriteString("<button onClick=\"location.href='" + prevName + ".html'\">Prev</button>")
+			prevStyle := styles[i-1]
+			inputBuffer.WriteString("<button onClick=\"location.href='" + prevStyle.fileName + ".html'\">Prev</button>")
 		} else {
 			inputBuffer.WriteString("<button disabled='true'>Prev</button>")
 		}
 
 		// Button to the next style, if possible
 		if i < (len(styles) - 1) {
-			nextName := styles[i+1]
-			inputBuffer.WriteString("<button onClick=\"location.href='" + nextName + ".html'\">Next</button>")
+			nextStyle := styles[i+1]
+			inputBuffer.WriteString("<button onClick=\"location.href='" + nextStyle.fileName + ".html'\">Next</button>")
 		} else {
 			inputBuffer.WriteString("<button disabled='true'>Next</button>")
 		}
@@ -75,13 +75,13 @@ func generateGallery(sampleContent, dirname string) {
 		inputBuffer.WriteString("</body></html>")
 
 		// Highlight the source code in the HTML with the current style
-		htmlBytes, err := splash.Splash(inputBuffer.Bytes(), styleName)
+		htmlBytes, err := splash.Splash(inputBuffer.Bytes(), style.styleName)
 		if err != nil {
 			panic(err)
 		}
 
-		// Write the HTML sample for this style name
-		err = os.WriteFile(dirname+"/"+styleName+".html", htmlBytes, 0644)
+		// Write the HTML sample using the XML filename
+		err = os.WriteFile(dirname+"/"+style.fileName+".html", htmlBytes, 0644)
 		if err != nil {
 			panic(err)
 		}
@@ -97,8 +97,8 @@ func generateGallery(sampleContent, dirname string) {
 	buf.WriteString("</style></head><body><h1 id='main-headline'>")
 	buf.WriteString(title)
 	buf.WriteString("</h1><ul>")
-	for _, styleName := range styles {
-		buf.WriteString("<li><a href=\"" + styleName + ".html\" alt=\"" + styleName + " style\">" + styleName + "</a></li>")
+	for _, style := range styles {
+		buf.WriteString("<li><a href=\"" + style.fileName + ".html\" alt=\"" + style.styleName + " style\">" + style.styleName + "</a></li>")
 	}
 	buf.WriteString("</ul>")
 	buf.WriteString("<p><a href='all.html' alt='All styles on one page'>All styles on one page</a></p>")
@@ -123,13 +123,13 @@ func generateGallery(sampleContent, dirname string) {
 	buf.WriteString("</style></head><body><h1>")
 	buf.WriteString(title)
 	buf.WriteString("</h1>")
-	for _, styleName := range styles {
-		buf.WriteString("<a name='" + styleName + "'>") // HTML anchor
+	for _, style := range styles {
+		buf.WriteString("<a name='" + style.fileName + "'>") // HTML anchor
 		buf.WriteString("<h2>")
-		buf.WriteString("<a id='stylelink' href='" + styleName + ".html' alt='View only " + styleName + "'>" + styleName + "</a>")
+		buf.WriteString("<a id='stylelink' href='" + style.fileName + ".html' alt='View only " + style.styleName + "'>" + style.styleName + "</a>")
 		buf.WriteString("</h2>")
 
-		htmlBytes, cssBytes, err := splash.Highlight([]byte(sampleContent), styleName, false)
+		htmlBytes, cssBytes, err := splash.Highlight([]byte(sampleContent), style.styleName, false)
 		if err != nil {
 			panic(err)
 		}
