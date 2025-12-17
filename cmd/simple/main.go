@@ -1,13 +1,14 @@
 package main
 
 import (
+	"os"
+
 	"github.com/xyproto/splash"
-	"io/ioutil"
 )
 
 func main() {
 	// Read "input.html"
-	inputHTML, err := ioutil.ReadFile("input.html")
+	inputHTML, err := os.ReadFile("input.html")
 	if err != nil {
 		panic(err)
 	}
@@ -19,7 +20,7 @@ func main() {
 	}
 
 	// Write the highlighted HTML to "output.html"
-	if err := ioutil.WriteFile("output.html", outputHTML, 0644); err != nil {
+	if err := os.WriteFile("output.html", outputHTML, 0644); err != nil {
 		panic(err)
 	}
 }

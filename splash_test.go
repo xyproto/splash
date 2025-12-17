@@ -3,7 +3,7 @@ package splash
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 
@@ -113,7 +113,7 @@ func main() {
 
 	//fmt.Println("SIMPLE OUTPUT\n", output)
 
-	err = ioutil.WriteFile("output_test_simple.html", htmlBytes, 0644)
+	err = os.WriteFile("output_test_simple.html", htmlBytes, 0644)
 	if err != nil {
 		t.Error(err)
 	}
@@ -160,7 +160,7 @@ func TestMarkdown(t *testing.T) {
 	//fmt.Println("--- HTML OUTPUT ---")
 	//fmt.Println(output)
 
-	err = ioutil.WriteFile("output_test_markdown.html", htmlBytes, 0644)
+	err = os.WriteFile("output_test_markdown.html", htmlBytes, 0644)
 	if err != nil {
 		panic(err)
 	}
@@ -245,7 +245,7 @@ func TestLanguageBlock(t *testing.T) {
 
 	//fmt.Println("LANGUAGE OUTPUT\n", output)
 
-	err = ioutil.WriteFile("output_test_language.html", htmlBytes, 0644)
+	err = os.WriteFile("output_test_language.html", htmlBytes, 0644)
 	if err != nil {
 		panic(err)
 	}
