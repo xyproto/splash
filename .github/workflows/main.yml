@@ -26,20 +26,10 @@ jobs:
           git config --global user.name "GitHub Action"
           git add go.* vendor || true
           git commit -m "Update dependencies" || true
-      - name: Build selfupdate
-        run: |
-          cd cmd/selfupdate
-          go build -mod=vendor
       - name: Run selfupdate
-        run: cmd/selfupdate/selfupdate
-      - name: Build gendoc
-        run: |
-          cd cmd/gendoc
-          go build -mod=vendor
+        run: go run cmd/selfupdate/*.go
       - name: Run gendoc
-        run: |
-          cd cmd/gendoc
-          ./gendoc
+        run: go run cmd/gendoc/*.go
       - name: Regression test, ref https://github.com/xyproto/splash/issues/8
         run: ./xmlnametest.sh
       - name: Commit and push changes
