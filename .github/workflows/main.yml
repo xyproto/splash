@@ -31,7 +31,7 @@ jobs:
       - name: Run gendoc
         run: go run cmd/gendoc/*.go
       - name: Regression test, ref https://github.com/xyproto/splash/issues/8
-        run: ./xmlnametest.sh
+        run: ./scripts/xmlname.sh
       - name: Commit and push changes
         run: |
           git config --global user.email "action@github.com"
