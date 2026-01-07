@@ -32,7 +32,7 @@ github.com/ProtonMail/go-crypto/openpgp/packet
 github.com/ProtonMail/go-crypto/openpgp/s2k
 github.com/ProtonMail/go-crypto/openpgp/x25519
 github.com/ProtonMail/go-crypto/openpgp/x448
-# github.com/alecthomas/chroma/v2 v2.21.2-0.20260103222629-31592d5b6e3e
+# github.com/alecthomas/chroma/v2 v2.21.2-0.20260106025910-3e1f428265c7
 ## explicit; go 1.22
 github.com/alecthomas/chroma/v2
 github.com/alecthomas/chroma/v2/formatters/html
